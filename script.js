@@ -54,7 +54,6 @@ function showHome() {
     navHome.classList.add('active');
     navOverview.classList.remove('active');
   }
-  document.body.classList.remove('overview-active');
 }
 
 function showOverview() {
@@ -66,8 +65,18 @@ function showOverview() {
     navOverview.classList.add('active');
     navHome.classList.remove('active');
   }
-  document.body.classList.add('overview-active');
   swiper.update();
+  
+  // Hide the hint when user clicks overview
+  hideOverviewHint();
+}
+
+// Hide overview hint function
+function hideOverviewHint() {
+  const hint = document.getElementById('overview-hint');
+  if (hint) {
+    hint.classList.add('hidden');
+  }
 }
 
 if (navHome) {
@@ -77,6 +86,11 @@ if (navHome) {
 if (navOverview) {
   navOverview.addEventListener('click', showOverview);
 }
+
+// Auto-hide hint after 8 seconds
+setTimeout(() => {
+  hideOverviewHint();
+}, 8000);
 
 // Start on Home (intro) by default
 showHome();

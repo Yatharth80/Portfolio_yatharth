@@ -29,40 +29,45 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
     <!-- Home screen / intro for the Home button -->
     <main class="home-area" id="home-screen">
-      <div class="home-card">
-        <div class="profile-photo-wrapper">
-          <img src="profile-photo.jpeg" alt="Yatharth Rathi" class="profile-photo">
-        </div>
-        <p class="hello-text">Hi, I'm</p>
-        <h2 class="name-text">Yatharth Rathi</h2>
-        <p class="role-text">
-          Currently pursuing my journey to become a
-          <span class="highlight">Product Manager</span>.
-        </p>
-        <p class="sub-text">
-          I love turning ideas into real, usable products – from understanding
-          users and defining the problem to designing solutions and working
-          with tech to ship them.
-        </p>
-        
-        <div class="home-actions">
-          <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
-            📄 View CV
-          </a>
+      <div class="home-content">
+        <div class="home-left">
+          <p class="hello-text">Hi, I'm</p>
+          <h2 class="name-text">Yatharth Rathi</h2>
+          <p class="role-text">
+            Currently pursuing my journey to become a
+            <span class="highlight">Product Manager</span>.
+          </p>
+          <p class="sub-text">
+            I love turning ideas into real, usable products – from understanding
+            users and defining the problem to designing solutions and working
+            with tech to ship them.
+          </p>
+          
+          <div class="home-actions">
+            <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
+              📄 View CV
+            </a>
+          </div>
+
+          <div class="contact-section">
+            <h3 class="contact-title">Get in Touch</h3>
+            <div class="contact-links">
+              <a href="mailto:your.email@example.com" class="contact-link" id="email-link">
+                ✉️ Email
+              </a>
+              <a href="#" class="contact-link" id="linkedin-link" target="_blank" rel="noopener noreferrer">
+                💼 LinkedIn
+              </a>
+              <a href="#" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
+                💻 GitHub
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div class="contact-section">
-          <h3 class="contact-title">Get in Touch</h3>
-          <div class="contact-links">
-            <a href="mailto:your.email@example.com" class="contact-link" id="email-link">
-              ✉️ Email
-            </a>
-            <a href="#" class="contact-link" id="linkedin-link" target="_blank" rel="noopener noreferrer">
-              💼 LinkedIn
-            </a>
-            <a href="#" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
-              💻 GitHub
-            </a>
+        <div class="home-right">
+          <div class="profile-photo-wrapper">
+            <img src="profile-photo.jpeg" alt="Yatharth Rathi" class="profile-photo">
           </div>
         </div>
       </div>
@@ -190,18 +195,21 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
       </div>
     </div>
 
-    <!-- Bottom nav to mimic Android/iOS navigation buttons -->
-    <footer class="nav-bar">
-      <button class="nav-btn nav-back" aria-label="Back">
-        ▲
-      </button>
+    <!-- Left side vertical navigation buttons -->
+    <nav class="nav-bar">
       <button class="nav-btn nav-home active" aria-label="Home">
         ●
       </button>
       <button class="nav-btn nav-overview" aria-label="Overview">
         ▢
       </button>
-    </footer>
+    </nav>
+
+    <!-- Arrow hint pointing to overview button -->
+    <div class="overview-hint" id="overview-hint">
+      <div class="hint-arrow">→</div>
+      <div class="hint-text">View Projects</div>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
