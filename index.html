@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Portfolio</title>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="app-shell">
+    <!-- Top bar like a phone/tablet "Recent apps" screen -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <h1 class="top-title">Recent Work</h1>
+      <div class="top-bar-right">
+        <span class="overview-icon">▢</span>
+      </div>
+    </header>
+
+    <!-- Home screen / intro for the Home button -->
+    <main class="home-area" id="home-screen">
+      <div class="home-card">
+        <div class="profile-photo-wrapper">
+          <img src="profile-photo.jpeg" alt="Yatharth Rathi" class="profile-photo">
+        </div>
+        <p class="hello-text">Hi, I'm</p>
+        <h2 class="name-text">Yatharth Rathi</h2>
+        <p class="role-text">
+          Currently pursuing my journey to become a
+          <span class="highlight">Product Manager</span>.
+        </p>
+        <p class="sub-text">
+          I love turning ideas into real, usable products – from understanding
+          users and defining the problem to designing solutions and working
+          with tech to ship them.
+        </p>
+        
+        <div class="home-actions">
+          <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
+            📄 View CV
+          </a>
+        </div>
+
+        <div class="contact-section">
+          <h3 class="contact-title">Get in Touch</h3>
+          <div class="contact-links">
+            <a href="mailto:your.email@example.com" class="contact-link" id="email-link">
+              ✉️ Email
+            </a>
+            <a href="#" class="contact-link" id="linkedin-link" target="_blank" rel="noopener noreferrer">
+              💼 LinkedIn
+            </a>
+            <a href="#" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
+              💻 GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Overview-style slider for your projects -->
+    <main class="overview-area" id="overview-screen">
+      <div class="swiper">
+
+        <div class="swiper-wrapper">
+
+          <div class="swiper-slide">
+            <div class="project-image-wrapper">
+              <img src="emotion-main.png" alt="Emotion recognition MVP UI" class="project-image">
+            </div>
+            <div class="project-content">
+              <h2>Emotion Recognition App</h2>
+              <p>Real-time emotion analyser powered by computer vision and Gemini.</p>
+              <a href="#" class="project-link" data-project="emotion">View details</a>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="project-image-wrapper">
+              <img src="https://images.pexels.com/photos/11813169/pexels-photo-11813169.jpeg?auto=compress&cs=tinysrgb&w=800" alt="AI chatbot Colab interface preview" class="project-image">
+            </div>
+            <div class="project-content">
+              <h2>AI Chatbot (Colab)</h2>
+              <p>Prototype chatbot built in Google Colab to explore user questions.</p>
+              <a href="#" class="project-link" data-project="chatbot">View details</a>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="project-image-wrapper">
+              <img src="https://images.pexels.com/photos/11814659/pexels-photo-11814659.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Portfolio overview UI preview" class="project-image">
+            </div>
+            <div class="project-content">
+              <h2>Overview-Style Portfolio</h2>
+              <p>This website itself – projects as recent-app style cards you can swipe.</p>
+              <a href="#" class="project-link" data-project="portfolio">View details</a>
+            </div>
+          </div>
+
+          <!-- Add more slides here for each project in your portfolio -->
+
+        </div>
+
+        <!-- Optional navigation / pagination controls -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-pagination"></div>
+
+      </div>
+      
+      <p class="swiper-hint">Drag / scroll or use arrows to browse projects</p>
+    </main>
+
+    <!-- Project details overlay (opens when you click "View details") -->
+    <div class="details-overlay" id="details-overlay">
+      <div class="details-card">
+        <button class="details-close" aria-label="Close details">×</button>
+
+        <h2 class="details-title" id="details-title">Project title</h2>
+        <p class="details-description" id="details-description">
+          Short description about this project.
+        </p>
+
+        <div class="details-section">
+          <h3 class="details-label">Problem</h3>
+          <p class="details-text" id="details-problem">
+            What problem were you trying to solve?
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Goal</h3>
+          <p class="details-text" id="details-goal">
+            What did success look like for this project?
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Your Role</h3>
+          <p class="details-text" id="details-role">
+            How you contributed and the hat you wore.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Product Thinking</h3>
+          <p class="details-text" id="details-thinking">
+            Why you made specific product/tech decisions.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Success Metric</h3>
+          <p class="details-text" id="details-metric">
+            How you measured the impact of your work.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Artifacts</h3>
+          <ul class="details-list" id="details-list">
+            <li>User flow diagram</li>
+            <li>1-page PRD</li>
+            <li>Screenshots & GitHub link</li>
+          </ul>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Screens from the MVP</h3>
+          <div class="details-gallery">
+            <img src="emotion-1.png" alt="Emotion MVP screen 1">
+            <img src="emotion-2.png" alt="Emotion MVP screen 2">
+            <img src="emotion-3.png" alt="Emotion MVP screen 3">
+          </div>
+        </div>
+
+        <a href="#" id="details-link" class="details-link" target="_blank" rel="noopener noreferrer">
+          View full case study
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom nav to mimic Android/iOS navigation buttons -->
+    <footer class="nav-bar">
+      <button class="nav-btn nav-back" aria-label="Back">
+        ▲
+      </button>
+      <button class="nav-btn nav-home active" aria-label="Home">
+        ●
+      </button>
+      <button class="nav-btn nav-overview" aria-label="Overview">
+        ▢
+      </button>
+    </footer>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
