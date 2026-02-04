@@ -757,36 +757,64 @@ const swiper = new Swiper('.swiper', {
   },
 });
 
-// Simple view switching between Home and Overview
+// Simple view switching between Home, Overview, and Skills
 const homeScreen = document.getElementById('home-screen');
 const overviewScreen = document.getElementById('overview-screen');
+const skillsScreen = document.getElementById('skills-screen');
 const navHome = document.querySelector('.nav-home');
 const navOverview = document.querySelector('.nav-overview');
+const navSkills = document.querySelector('.nav-skills');
 
 function showHome() {
-  if (homeScreen && overviewScreen) {
+  if (homeScreen && overviewScreen && skillsScreen) {
+    homeScreen.classList.add('active');
     homeScreen.style.display = 'flex';
+    overviewScreen.classList.remove('active');
     overviewScreen.style.display = 'none';
+    skillsScreen.classList.remove('active');
+    skillsScreen.style.display = 'none';
   }
-  if (navHome && navOverview) {
+  if (navHome && navOverview && navSkills) {
     navHome.classList.add('active');
     navOverview.classList.remove('active');
+    navSkills.classList.remove('active');
   }
 }
 
 function showOverview() {
-  if (homeScreen && overviewScreen) {
+  if (homeScreen && overviewScreen && skillsScreen) {
+    homeScreen.classList.remove('active');
     homeScreen.style.display = 'none';
+    overviewScreen.classList.add('active');
     overviewScreen.style.display = 'flex';
+    skillsScreen.classList.remove('active');
+    skillsScreen.style.display = 'none';
   }
-  if (navHome && navOverview) {
+  if (navHome && navOverview && navSkills) {
     navOverview.classList.add('active');
     navHome.classList.remove('active');
+    navSkills.classList.remove('active');
   }
   swiper.update();
   
   // Hide the hint when user clicks overview
   hideOverviewHint();
+}
+
+function showSkills() {
+  if (homeScreen && overviewScreen && skillsScreen) {
+    homeScreen.classList.remove('active');
+    homeScreen.style.display = 'none';
+    overviewScreen.classList.remove('active');
+    overviewScreen.style.display = 'none';
+    skillsScreen.classList.add('active');
+    skillsScreen.style.display = 'block';
+  }
+  if (navHome && navOverview && navSkills) {
+    navSkills.classList.add('active');
+    navHome.classList.remove('active');
+    navOverview.classList.remove('active');
+  }
 }
 
 // Hide overview hint function
@@ -803,6 +831,10 @@ if (navHome) {
 
 if (navOverview) {
   navOverview.addEventListener('click', showOverview);
+}
+
+if (navSkills) {
+  navSkills.addEventListener('click', showSkills);
 }
 
 // Auto-hide hint after 8 seconds
@@ -990,3 +1022,107 @@ document.querySelectorAll('.project-link').forEach((link) => {
     openDetails(key);
   });
 });
+
+// ===== CURSOR REPEL / DISTORTION EFFECT =====
+class CursorRepelEffect {
+  constructor() {
+    this.mouseX = window.innerWidth / 2;
+    this.mouseY = window.innerHeight / 2;
+    this.repelRadius = 120;
+    this.repelStrength = 30;
+    this.init();
+  }
+
+  init() {
+    document.addEventListener('mousemove', (e) => {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.updateElements();
+    });
+
+    document.addEventListener('mouseleave', () => {
+      this.resetElements();
+    });
+  }
+
+  updateElements() {
+    // Apply repel effect to text elements
+    const textElements = document.querySelectorAll(
+      '.name-text, .hello-text, .role-text, .sub-text, .category-title, .skill-name, h2, p'
+    );
+
+    textElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const distX = this.mouseX - centerX;
+      const distY = this.mouseY - centerY;
+      const distance = Math.sqrt(distX * distX + distY * distY);
+
+      if (distance < this.repelRadius) {
+        const angle = Math.atan2(distY, distX);
+        const force = (1 - distance / this.repelRadius) * this.repelStrength;
+        const pushX = Math.cos(angle + Math.PI) * force;
+        const pushY = Math.sin(angle + Math.PI) * force;
+
+        el.style.transform = `translate(${pushX}px, ${pushY}px)`;
+        el.style.transition = 'none';
+      } else {
+        el.style.transform = 'translate(0, 0)';
+        el.style.transition = 'transform 0.4s ease-out';
+      }
+    });
+
+    // Apply repel effect to images
+    const images = document.querySelectorAll('.profile-photo, .project-image');
+
+    images.forEach((img) => {
+      const rect = img.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const distX = this.mouseX - centerX;
+      const distY = this.mouseY - centerY;
+      const distance = Math.sqrt(distX * distX + distY * distY);
+
+      if (distance < this.repelRadius) {
+        const angle = Math.atan2(distY, distX);
+        const force = (1 - distance / this.repelRadius) * this.repelStrength;
+        const pushX = Math.cos(angle + Math.PI) * force;
+        const pushY = Math.sin(angle + Math.PI) * force;
+
+        img.style.transform = `translate(${pushX}px, ${pushY}px) scale(1.02)`;
+        img.style.transition = 'none';
+        img.style.filter = 'brightness(1.1)';
+      } else {
+        img.style.transform = 'translate(0, 0) scale(1)';
+        img.style.transition = 'transform 0.4s ease-out, filter 0.4s ease-out';
+        img.style.filter = 'brightness(1)';
+      }
+    });
+  }
+
+  resetElements() {
+    const allElements = document.querySelectorAll(
+      '.name-text, .hello-text, .role-text, .sub-text, .category-title, .skill-name, h2, p, .profile-photo, .project-image'
+    );
+
+    allElements.forEach((el) => {
+      el.style.transform = 'translate(0, 0) scale(1)';
+      el.style.transition = 'transform 0.6s ease-out, filter 0.6s ease-out';
+      el.style.filter = 'brightness(1)';
+    });
+  }
+}
+
+// Initialize cursor repel effect when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    new CursorRepelEffect();
+  });
+} else {
+  new CursorRepelEffect();
+}
+
+// ===== END CURSOR REPEL EFFECT =====
