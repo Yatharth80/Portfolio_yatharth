@@ -13,6 +13,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
 <body>
 
+  <!-- Particle background (Igloo-style floating particles) -->
+  <canvas id="particle-canvas" class="particle-canvas" aria-hidden="true"></canvas>
+
   <!-- Grain Texture Overlay -->
   <div class="grain-overlay"></div>
 
@@ -401,6 +404,58 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
         </div>
       </div>
     </nav>
+
+    <!-- Growing tree: grows with project count (bottom-right). Click to scroll to projects. -->
+    <div class="portfolio-tree" id="portfolio-tree" data-stage="0" aria-label="View my projects" title="Click to see my projects">
+      <div class="tree-stage tree-stage-0" aria-hidden="true">
+        <svg class="tree-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="125" rx="35" ry="12" fill="#334155"/>
+          <circle cx="60" cy="115" r="8" fill="#78716c"/>
+          <circle cx="60" cy="108" r="4" fill="#5eead4" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="tree-stage tree-stage-1" aria-hidden="true">
+        <svg class="tree-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="125" rx="35" ry="12" fill="#334155"/>
+          <path d="M60 125 L60 95" stroke="#78716c" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="60" cy="88" rx="12" ry="18" fill="#22c55e"/>
+          <ellipse cx="58" cy="90" rx="4" ry="6" fill="#4ade80"/>
+        </svg>
+      </div>
+      <div class="tree-stage tree-stage-2" aria-hidden="true">
+        <svg class="tree-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="125" rx="35" ry="12" fill="#334155"/>
+          <path d="M60 125 L60 75" stroke="#78716c" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="52" cy="78" rx="14" ry="20" fill="#22c55e"/>
+          <ellipse cx="68" cy="82" rx="14" ry="20" fill="#16a34a"/>
+          <ellipse cx="60" cy="65" rx="10" ry="16" fill="#4ade80"/>
+        </svg>
+      </div>
+      <div class="tree-stage tree-stage-3" aria-hidden="true">
+        <svg class="tree-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="125" rx="35" ry="12" fill="#334155"/>
+          <path d="M60 125 L60 45" stroke="#654321" stroke-width="6" stroke-linecap="round"/>
+          <path d="M60 70 Q40 55 45 40" stroke="#22c55e" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M60 55 Q80 45 75 35" stroke="#16a34a" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <ellipse cx="42" cy="38" rx="18" ry="22" fill="#22c55e"/>
+          <ellipse cx="72" cy="42" rx="18" ry="22" fill="#16a34a"/>
+          <ellipse cx="60" cy="28" rx="20" ry="25" fill="#4ade80"/>
+        </svg>
+      </div>
+      <div class="tree-stage tree-stage-4" aria-hidden="true">
+        <svg class="tree-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="125" rx="38" ry="12" fill="#334155"/>
+          <path d="M60 125 L60 35" stroke="#654321" stroke-width="8" stroke-linecap="round"/>
+          <path d="M60 85 Q25 65 30 25" stroke="#15803d" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M60 75 Q95 55 88 28" stroke="#16a34a" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <ellipse cx="28" cy="22" rx="22" ry="28" fill="#16a34a"/>
+          <ellipse cx="88" cy="26" rx="22" ry="28" fill="#15803d"/>
+          <ellipse cx="60" cy="15" rx="28" ry="32" fill="#22c55e"/>
+          <ellipse cx="55" cy="12" rx="10" ry="14" fill="#4ade80"/>
+        </svg>
+      </div>
+      <div class="tree-label" id="tree-label">0 projects</div>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

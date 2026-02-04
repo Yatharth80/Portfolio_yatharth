@@ -1,3 +1,6 @@
+// Global reference for particle background (section-driven shape formation)
+let particleBackgroundInstance = null;
+
 // ===== SOUND MANAGER WITH AUDIO VISUALIZER =====
 class SoundManager {
   constructor() {
@@ -321,8 +324,9 @@ class MenuManager {
       showHome();
     } else if (section === 'overview') {
       showOverview();
+    } else if (section === 'skills') {
+      showSkills();
     }
-    // Skills section will be added in next feature
   }
 }
 
@@ -757,93 +761,108 @@ const swiper = new Swiper('.swiper', {
   },
 });
 
-// Simple view switching between Home, Overview, and Skills
-const homeScreen = document.getElementById('home-screen');
-const overviewScreen = document.getElementById('overview-screen');
-const skillsScreen = document.getElementById('skills-screen');
-const navHome = document.querySelector('.nav-home');
-const navOverview = document.querySelector('.nav-overview');
-const navSkills = document.querySelector('.nav-skills');
+// Scroll-based sections: Home, Overview, Skills (all visible, scroll to move between)
+let homeScreen, overviewScreen, skillsScreen, navHome, navOverview, navSkills;
+
+function getSectionEls() {
+  homeScreen = document.getElementById('home-screen');
+  overviewScreen = document.getElementById('overview-screen');
+  skillsScreen = document.getElementById('skills-screen');
+  navHome = document.querySelector('.nav-home');
+  navOverview = document.querySelector('.nav-overview');
+  navSkills = document.querySelector('.nav-skills');
+}
+
+function setActiveNav(section) {
+  if (!navHome || !navOverview || !navSkills) return;
+  navHome.classList.toggle('active', section === 'home');
+  navOverview.classList.toggle('active', section === 'overview');
+  navSkills.classList.toggle('active', section === 'skills');
+  if (particleBackgroundInstance) particleBackgroundInstance.setSection(section);
+}
+
+function scrollToSection(section) {
+  const el = section === 'home' ? homeScreen : section === 'overview' ? overviewScreen : skillsScreen;
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveNav(section);
+  }
+  if (section === 'overview') {
+    try {
+      if (typeof swiper !== 'undefined' && swiper && swiper.update) swiper.update();
+    } catch (e) {}
+    hideOverviewHint();
+  }
+}
 
 function showHome() {
-  if (homeScreen && overviewScreen && skillsScreen) {
-    homeScreen.classList.add('active');
-    homeScreen.style.display = 'flex';
-    overviewScreen.classList.remove('active');
-    overviewScreen.style.display = 'none';
-    skillsScreen.classList.remove('active');
-    skillsScreen.style.display = 'none';
-  }
-  if (navHome && navOverview && navSkills) {
-    navHome.classList.add('active');
-    navOverview.classList.remove('active');
-    navSkills.classList.remove('active');
-  }
+  scrollToSection('home');
 }
 
 function showOverview() {
-  if (homeScreen && overviewScreen && skillsScreen) {
-    homeScreen.classList.remove('active');
-    homeScreen.style.display = 'none';
-    overviewScreen.classList.add('active');
-    overviewScreen.style.display = 'flex';
-    skillsScreen.classList.remove('active');
-    skillsScreen.style.display = 'none';
-  }
-  if (navHome && navOverview && navSkills) {
-    navOverview.classList.add('active');
-    navHome.classList.remove('active');
-    navSkills.classList.remove('active');
-  }
-  swiper.update();
-  
-  // Hide the hint when user clicks overview
-  hideOverviewHint();
+  scrollToSection('overview');
 }
 
 function showSkills() {
-  if (homeScreen && overviewScreen && skillsScreen) {
-    homeScreen.classList.remove('active');
-    homeScreen.style.display = 'none';
-    overviewScreen.classList.remove('active');
-    overviewScreen.style.display = 'none';
-    skillsScreen.classList.add('active');
-    skillsScreen.style.display = 'block';
-  }
-  if (navHome && navOverview && navSkills) {
-    navSkills.classList.add('active');
-    navHome.classList.remove('active');
-    navOverview.classList.remove('active');
-  }
+  scrollToSection('skills');
 }
 
-// Hide overview hint function
+// Intersection Observer: update nav + particles when user scrolls (pick section with max visibility)
+let sectionRatios = { home: 0, overview: 0, skills: 0 };
+
+function initSectionObserver() {
+  getSectionEls();
+  const sections = [
+    { id: 'home-screen', section: 'home' },
+    { id: 'overview-screen', section: 'overview' },
+    { id: 'skills-screen', section: 'skills' },
+  ];
+  const observed = sections.map(({ id, section }) => ({
+    el: document.getElementById(id),
+    section,
+  })).filter((o) => o.el);
+
+  if (!observed.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const found = observed.find((o) => o.el === entry.target);
+        if (found) sectionRatios[found.section] = entry.intersectionRatio;
+      });
+      const best = Object.entries(sectionRatios).reduce((a, b) => (a[1] >= b[1] ? a : b), ['home', 0]);
+      if (best[1] >= 0.15) setActiveNav(best[0]);
+    },
+    { threshold: [0, 0.15, 0.5, 0.8, 1], rootMargin: '-15% 0px -15% 0px' }
+  );
+
+  observed.forEach(({ el }) => observer.observe(el));
+}
+
 function hideOverviewHint() {
   const hint = document.getElementById('overview-hint');
-  if (hint) {
-    hint.classList.add('hidden');
-  }
+  if (hint) hint.classList.add('hidden');
 }
 
-if (navHome) {
-  navHome.addEventListener('click', showHome);
+function initScrollSectionListeners() {
+  getSectionEls();
+  if (navHome) navHome.addEventListener('click', showHome);
+  if (navOverview) navOverview.addEventListener('click', showOverview);
+  if (navSkills) navSkills.addEventListener('click', showSkills);
+
+  const portfolioTreeEl = document.getElementById('portfolio-tree');
+  if (portfolioTreeEl) portfolioTreeEl.addEventListener('click', () => showOverview());
+
+  setTimeout(hideOverviewHint, 8000);
+  initSectionObserver();
+  setActiveNav('home');
 }
 
-if (navOverview) {
-  navOverview.addEventListener('click', showOverview);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initScrollSectionListeners);
+} else {
+  initScrollSectionListeners();
 }
-
-if (navSkills) {
-  navSkills.addEventListener('click', showSkills);
-}
-
-// Auto-hide hint after 8 seconds
-setTimeout(() => {
-  hideOverviewHint();
-}, 8000);
-
-// Start on Home (intro) by default
-showHome();
 
 // CV and Contact Links Configuration
 // Replace these with your actual links
@@ -1023,6 +1042,49 @@ document.querySelectorAll('.project-link').forEach((link) => {
   });
 });
 
+// ===== GROWING PORTFOLIO TREE =====
+// Tree stage: 0 = seed, 1 = sprout, 2 = small plant, 3 = medium tree, 4 = full tree
+function getProjectCount() {
+  return document.querySelectorAll('.swiper-wrapper .swiper-slide').length;
+}
+
+function getTreeStage(count) {
+  if (count <= 0) return 0;
+  if (count === 1) return 1;
+  if (count === 2) return 2;
+  if (count === 3) return 3;
+  return 4; // 4+ projects = full tree
+}
+
+function updatePortfolioTree() {
+  const treeEl = document.getElementById('portfolio-tree');
+  const labelEl = document.getElementById('tree-label');
+  if (!treeEl) return;
+
+  const count = getProjectCount();
+  const stage = getTreeStage(count);
+
+  treeEl.setAttribute('data-stage', String(stage));
+
+  if (labelEl) {
+    labelEl.textContent = count === 1 ? '1 project' : count + ' projects';
+  }
+}
+
+// Run on load and when DOM might change (e.g. if you add/remove slides later)
+updatePortfolioTree();
+
+// Optional: re-run when Swiper is updated (e.g. after adding slides dynamically)
+if (typeof swiper !== 'undefined' && swiper) {
+  const originalUpdate = swiper.update;
+  if (originalUpdate) {
+    swiper.update = function () {
+      originalUpdate.apply(this, arguments);
+      updatePortfolioTree();
+    };
+  }
+}
+
 // ===== CURSOR REPEL / DISTORTION EFFECT =====
 class CursorRepelEffect {
   constructor() {
@@ -1120,9 +1182,219 @@ class CursorRepelEffect {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new CursorRepelEffect();
+    particleBackgroundInstance = new ParticleBackground();
+    if (particleBackgroundInstance) particleBackgroundInstance.setSection('home');
   });
 } else {
   new CursorRepelEffect();
+  particleBackgroundInstance = new ParticleBackground();
+  if (particleBackgroundInstance) particleBackgroundInstance.setSection('home');
+}
+
+// ===== PARTICLE BACKGROUND – sand/fluid particles that form shapes by section =====
+class ParticleBackground {
+  constructor() {
+    this.canvas = document.getElementById('particle-canvas');
+    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+    this.particles = [];
+    this.particleCount = 100;
+    this.connectionDistance = 90;
+    this.animationId = null;
+    this.currentSection = 'home';
+    this.formProgress = 0;
+    this.targetFormProgress = 0;
+    this.cardPoints = [];
+    this.skillsPoints = [];
+    this.cursorX = -1e5;
+    this.cursorY = -1e5;
+    this.repelRadius = 140;
+    this.repelStrength = 2.2;
+    this.resize = this.resize.bind(this);
+    this.animate = this.animate.bind(this);
+
+    if (!this.canvas || !this.ctx) return;
+
+    this.resize();
+    window.addEventListener('resize', this.resize);
+    document.addEventListener('mousemove', (e) => {
+      this.cursorX = e.clientX;
+      this.cursorY = e.clientY;
+    });
+    document.addEventListener('mouseleave', () => {
+      this.cursorX = -1e5;
+      this.cursorY = -1e5;
+    });
+    this.initParticles();
+    this.animate();
+  }
+
+  resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.w = this.canvas.offsetWidth;
+    this.h = this.canvas.offsetHeight;
+    this.canvas.width = this.w * dpr;
+    this.canvas.height = this.h * dpr;
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.scale(dpr, dpr);
+    this.cardPoints = this.getCardShapePoints();
+    this.skillsPoints = this.getSkillsShapePoints();
+    if (this.particles.length) {
+      this.particles.forEach((p, i) => {
+        p.x = Math.max(0, Math.min(this.w, p.x));
+        p.y = Math.max(0, Math.min(this.h, p.y));
+        if (this.currentSection === 'overview' && this.cardPoints.length) {
+          const pt = this.cardPoints[i % this.cardPoints.length];
+          p.tx = pt.x;
+          p.ty = pt.y;
+        }
+        if (this.currentSection === 'skills' && this.skillsPoints.length) {
+          const pt = this.skillsPoints[i % this.skillsPoints.length];
+          p.tx = pt.x;
+          p.ty = pt.y;
+        }
+      });
+    }
+  }
+
+  getCardShapePoints() {
+    const pts = [];
+    const cx = this.w / 2;
+    const cy = this.h / 2;
+    const cardW = Math.min(320, this.w * 0.75);
+    const cardH = Math.min(200, this.h * 0.4);
+    const step = 14;
+    for (let x = -cardW / 2; x <= cardW / 2; x += step) {
+      for (let y = -cardH / 2; y <= cardH / 2; y += step) {
+        pts.push({ x: cx + x, y: cy + y });
+      }
+    }
+    return pts;
+  }
+
+  getSkillsShapePoints() {
+    const pts = [];
+    const cx = this.w / 2;
+    const cy = this.h / 2;
+    const barW = 28;
+    const heights = [90, 130, 70];
+    const gap = 36;
+    for (let b = 0; b < 3; b++) {
+      const bx = cx + (b - 1) * (barW + gap);
+      const step = 10;
+      for (let y = 0; y < heights[b]; y += step) {
+        for (let x = -barW / 2; x <= barW / 2; x += step) {
+          pts.push({ x: bx + x, y: cy + 60 - y });
+        }
+      }
+    }
+    return pts;
+  }
+
+  setSection(section) {
+    this.currentSection = section;
+    if (section === 'home') {
+      this.targetFormProgress = 0;
+      this.particles.forEach((p) => {
+        p.tx = Math.random() * this.w;
+        p.ty = Math.random() * this.h;
+      });
+    } else if (section === 'overview' && this.cardPoints.length) {
+      this.targetFormProgress = 1;
+      this.particles.forEach((p, i) => {
+        const pt = this.cardPoints[i % this.cardPoints.length];
+        p.tx = pt.x;
+        p.ty = pt.y;
+      });
+    } else if (section === 'skills' && this.skillsPoints.length) {
+      this.targetFormProgress = 1;
+      this.particles.forEach((p, i) => {
+        const pt = this.skillsPoints[i % this.skillsPoints.length];
+        p.tx = pt.x;
+        p.ty = pt.y;
+      });
+    }
+  }
+
+  initParticles() {
+    this.particles = [];
+    for (let i = 0; i < this.particleCount; i++) {
+      this.particles.push({
+        x: Math.random() * this.w,
+        y: Math.random() * this.h,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        tx: Math.random() * this.w,
+        ty: Math.random() * this.h,
+        radius: Math.random() * 1 + 0.6,
+        opacity: 0.2 + Math.random() * 0.4,
+        delay: Math.random() * 0.3,
+      });
+    }
+  }
+
+  animate() {
+    if (!this.ctx || !this.w || !this.h) return;
+
+    this.ctx.clearRect(0, 0, this.w, this.h);
+
+    const formLerp = 0.028;
+    this.formProgress += (this.targetFormProgress - this.formProgress) * formLerp;
+
+    const cx = this.cursorX;
+    const cy = this.cursorY;
+
+    this.particles.forEach((p) => {
+      const dx = p.x - cx;
+      const dy = p.y - cy;
+      const distToCursor = Math.sqrt(dx * dx + dy * dy);
+      if (distToCursor < this.repelRadius && distToCursor > 2) {
+        const force = (1 - distToCursor / this.repelRadius) * this.repelStrength;
+        const nx = dx / distToCursor;
+        const ny = dy / distToCursor;
+        p.x += nx * force;
+        p.y += ny * force;
+      }
+      const pull = this.formProgress * (0.5 + p.delay) * 0.04;
+      p.x += (p.tx - p.x) * pull + (1 - this.formProgress) * p.vx;
+      p.y += (p.ty - p.y) * pull + (1 - this.formProgress) * p.vy;
+      if (this.formProgress < 0.01) {
+        if (p.x < 0 || p.x > this.w) p.vx *= -1;
+        if (p.y < 0 || p.y > this.h) p.vy *= -1;
+        p.x = Math.max(0, Math.min(this.w, p.x));
+        p.y = Math.max(0, Math.min(this.h, p.y));
+      }
+    });
+
+    const maxLines = 80;
+    let linesDrawn = 0;
+    const connDistSq = this.connectionDistance * this.connectionDistance;
+    for (let i = 0; i < this.particles.length && linesDrawn < maxLines; i++) {
+      for (let j = i + 1; j < this.particles.length && linesDrawn < maxLines; j++) {
+        const dx = this.particles[i].x - this.particles[j].x;
+        const dy = this.particles[i].y - this.particles[j].y;
+        if (dx * dx + dy * dy < connDistSq) {
+          const d = Math.sqrt(dx * dx + dy * dy);
+          const alpha = (1 - d / this.connectionDistance) * 0.1 * (0.5 + this.formProgress * 0.5);
+          this.ctx.strokeStyle = `rgba(94, 234, 212, ${alpha})`;
+          this.ctx.lineWidth = 0.6;
+          this.ctx.beginPath();
+          this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+          this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+          this.ctx.stroke();
+          linesDrawn++;
+        }
+      }
+    }
+
+    this.particles.forEach((p) => {
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      this.ctx.fillStyle = `rgba(94, 234, 212, ${p.opacity})`;
+      this.ctx.fill();
+    });
+
+    this.animationId = requestAnimationFrame(this.animate);
+  }
 }
 
 // ===== END CURSOR REPEL EFFECT =====
