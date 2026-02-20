@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>My Portfolio</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
@@ -16,8 +20,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <!-- Particle background (Igloo-style floating particles) -->
   <canvas id="particle-canvas" class="particle-canvas" aria-hidden="true"></canvas>
 
+  <!-- Fluid cursor distortion layer (GPU) -->
+  <canvas id="fluid-distortion-layer" class="fluid-distortion-layer" aria-hidden="true"></canvas>
+
   <!-- Grain Texture Overlay -->
   <div class="grain-overlay"></div>
+  <div class="vignette-overlay" aria-hidden="true"></div>
+  <div class="light-leak" aria-hidden="true"></div>
 
   <!-- SVG Filters for wave effects -->
   <svg style="display: none;">
@@ -49,70 +58,40 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   </svg>
 
   <div class="app-shell">
-    <!-- Top bar like a phone/tablet "Recent apps" screen -->
-    <header class="top-bar">
-      <div class="top-bar-left">
-        <span class="dot dot-red"></span>
-        <span class="dot dot-yellow"></span>
-        <span class="dot dot-green"></span>
-      </div>
-      <h1 class="top-title">Recent Work</h1>
-      <div class="top-bar-right">
-        <span class="overview-icon">▢</span>
-      </div>
-    </header>
-
-    <!-- Home screen / intro for the Home button -->
-    <main class="home-area" id="home-screen">
-      <div class="home-content">
-        <div class="home-left">
-          <p class="hello-text">Hi, I'm</p>
-          <h2 class="name-text" id="name-text">Yatharth Rathi</h2>
-          <p class="role-text">
-            Product Manager in the making
-          </p>
-          <p class="sub-text">
-            Turning ideas into products people love.
-          </p>
-          
-          <div class="home-actions">
-            <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
-              📄 View CV
-            </a>
-          </div>
-
-          <div class="contact-section">
-            <h3 class="contact-title">Get in Touch</h3>
-            <div class="contact-links">
-              <a href="mailto:yatharthrathi08@gmail.com" class="contact-link" id="email-link">
-                ✉️ Email
-              </a>
-              <a href="https://www.linkedin.com/in/yatharth-rathi-781aa627b/" class="contact-link" id="linkedin-link" target="_blank" rel="noopener noreferrer">
-                💼 LinkedIn
-              </a>
-              <a href="https://github.com/Yatharth80" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
-                💻 GitHub
-              </a>
-              <a href="#" class="contact-link" id="resume-link" target="_blank" rel="noopener noreferrer">
-                📄 Resume
-              </a>
-              <a href="#" class="contact-link" id="certificates-link" target="_blank" rel="noopener noreferrer">
-                🎓 Certificates
-              </a>
-            </div>
-          </div>
+    <section class="cosmic-hero system-section constellation-section" id="cosmic-hero" data-reveal>
+      <canvas id="cosmic-sky" class="cosmic-sky" aria-hidden="true"></canvas>
+      <div class="cosmic-hero-inner">
+        <p class="cosmic-kicker">Night Sky Portfolio</p>
+        <h1 class="cosmic-title">Yatharth Rathi</h1>
+        <p class="cosmic-tagline">Exploring ideas across code and creativity.</p>
+        <div class="cosmic-nav" aria-label="Primary">
+          <button class="cosmic-nav-star" type="button" data-target="about-screen" aria-label="About">
+            <span class="cosmic-nav-label">About</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="skills-screen" aria-label="Skills">
+            <span class="cosmic-nav-label">Skills</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="overview-screen" aria-label="Projects">
+            <span class="cosmic-nav-label">Projects</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="experience-screen" aria-label="Experience">
+            <span class="cosmic-nav-label">Experience</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="connect-screen" aria-label="Contact">
+            <span class="cosmic-nav-label">Contact</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="classic-screen" aria-label="Classic View">
+            <span class="cosmic-nav-label">Classic</span>
+          </button>
         </div>
-
-        <div class="home-right">
-          <div class="profile-photo-wrapper">
-            <img src="profile-photo.jpeg" alt="Yatharth Rathi" class="profile-photo">
-          </div>
-        </div>
+        <div class="cosmic-hint">Scroll to explore</div>
       </div>
-    </main>
+      <div class="cosmic-label" id="cosmic-label" aria-hidden="true"></div>
+    </section>
 
     <!-- Overview-style slider for your projects -->
-    <main class="overview-area" id="overview-screen">
+    <main class="overview-area system-section constellation-section" id="overview-screen" data-reveal>
+      <canvas class="section-constellation" data-constellation="shani" aria-hidden="true"></canvas>
       <div class="swiper">
 
         <div class="swiper-wrapper">
@@ -135,7 +114,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
           <div class="swiper-slide">
             <div class="project-image-wrapper">
-              <img src="https://images.pexels.com/photos/11813169/pexels-photo-11813169.jpeg?auto=compress&cs=tinysrgb&w=800" alt="AI chatbot Colab interface preview" class="project-image">
+              <img src="AI chatbot MVP screen shot.png" alt="AI chatbot MVP interface preview" class="project-image">
             </div>
             <div class="project-content">
               <h2>AI Chatbot (Colab)</h2>
@@ -177,79 +156,37 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
       </div>
       
       <p class="swiper-hint">Drag / scroll or use arrows to browse projects</p>
+
     </main>
 
-    <!-- Project details overlay (opens when you click "View details") -->
-    <div class="details-overlay" id="details-overlay">
-      <div class="details-card">
-        <button class="details-close" aria-label="Close details">×</button>
-
-        <h2 class="details-title" id="details-title">Project title</h2>
-        <p class="details-description" id="details-description">
-          Short description about this project.
+    <!-- About Section -->
+    <section class="about-area system-section constellation-section" id="about-screen" data-reveal>
+      <canvas class="section-constellation" data-constellation="ursa" aria-hidden="true"></canvas>
+      <div class="about-container">
+        <h2 class="about-title">About Me</h2>
+        <p class="about-lead">
+          I build calm, focused product experiences that combine systems thinking with a human sense of detail.
         </p>
-
-        <div class="details-section">
-          <h3 class="details-label">Problem</h3>
-          <p class="details-text" id="details-problem">
-            What problem were you trying to solve?
-          </p>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Goal</h3>
-          <p class="details-text" id="details-goal">
-            What did success look like for this project?
-          </p>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Your Role</h3>
-          <p class="details-text" id="details-role">
-            How you contributed and the hat you wore.
-          </p>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Product Thinking</h3>
-          <p class="details-text" id="details-thinking">
-            Why you made specific product/tech decisions.
-          </p>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Success Metric</h3>
-          <p class="details-text" id="details-metric">
-            How you measured the impact of your work.
-          </p>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Artifacts</h3>
-          <ul class="details-list" id="details-list">
-            <li>User flow diagram</li>
-            <li>1-page PRD</li>
-            <li>Screenshots & GitHub link</li>
-          </ul>
-        </div>
-
-        <div class="details-section">
-          <h3 class="details-label">Screens from the MVP</h3>
-          <div class="details-gallery">
-            <img src="emotion-1.png" alt="Emotion MVP screen 1">
-            <img src="emotion-2.png" alt="Emotion MVP screen 2">
-            <img src="emotion-3.png" alt="Emotion MVP screen 3">
+        <div class="about-grid">
+          <div class="about-card">
+            <h3>Product Vision</h3>
+            <p>From discovery to delivery, I connect research insights with clear product strategy.</p>
+          </div>
+          <div class="about-card">
+            <h3>Design + Build</h3>
+            <p>I prototype fast, validate quickly, and translate ideas into UI flows that feel intuitive.</p>
+          </div>
+          <div class="about-card">
+            <h3>Collaboration</h3>
+            <p>I align teams through crisp narratives, structured roadmaps, and measurable outcomes.</p>
           </div>
         </div>
-
-        <a href="#" id="details-link" class="details-link" target="_blank" rel="noopener noreferrer">
-          View full case study
-        </a>
       </div>
-    </div>
+    </section>
 
     <!-- Skills Section -->
-    <main class="skills-area" id="skills-screen">
+    <main class="skills-area system-section constellation-section" id="skills-screen" data-reveal>
+      <canvas class="section-constellation" data-constellation="cassiopeia" aria-hidden="true"></canvas>
       <div class="skills-container">
         <h1 class="skills-title">Skills & Expertise</h1>
         
@@ -353,16 +290,126 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
       </div>
     </main>
 
+    <!-- Project details overlay (opens when you click "View details") -->
+    <div class="details-overlay" id="details-overlay">
+      <div class="details-card">
+        <button class="details-close" aria-label="Close details">×</button>
+
+        <h2 class="details-title" id="details-title">Project title</h2>
+        <p class="details-description" id="details-description">
+          Short description about this project.
+        </p>
+
+        <div class="details-section">
+          <h3 class="details-label">Problem</h3>
+          <p class="details-text" id="details-problem">
+            What problem were you trying to solve?
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Goal</h3>
+          <p class="details-text" id="details-goal">
+            What did success look like for this project?
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Your Role</h3>
+          <p class="details-text" id="details-role">
+            How you contributed and the hat you wore.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Product Thinking</h3>
+          <p class="details-text" id="details-thinking">
+            Why you made specific product/tech decisions.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Success Metric</h3>
+          <p class="details-text" id="details-metric">
+            How you measured the impact of your work.
+          </p>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-label">Artifacts</h3>
+          <ul class="details-list" id="details-list">
+            <li>User flow diagram</li>
+            <li>1-page PRD</li>
+            <li>Screenshots & GitHub link</li>
+          </ul>
+        </div>
+
+        <div class="details-section" id="details-gallery-section">
+          <h3 class="details-label">Screens from the MVP</h3>
+          <div class="details-gallery" id="details-gallery"></div>
+        </div>
+
+        <div class="details-section details-upload" id="chatbot-upload" aria-hidden="true">
+          <h3 class="details-label">Try Image Upload (MVP)</h3>
+          <p class="details-text">Upload an image to preview how the chatbot accepts visual input.</p>
+          <label class="upload-card" for="chatbot-upload-input">
+            <input type="file" id="chatbot-upload-input" accept="image/*">
+            <span class="upload-title">Drop image or click to upload</span>
+            <span class="upload-subtitle">PNG, JPG, GIF up to 5MB</span>
+          </label>
+          <p class="upload-hint" id="chatbot-upload-hint" aria-live="polite"></p>
+          <div class="upload-preview" id="chatbot-upload-preview" hidden>
+            <img id="chatbot-upload-img" alt="Uploaded preview">
+            <button type="button" class="upload-clear" id="chatbot-upload-clear">Clear</button>
+          </div>
+        </div>
+
+        <a href="#" id="details-link" class="details-link" target="_blank" rel="noopener noreferrer">
+          View full case study
+        </a>
+      </div>
+    </div>
+
+    <!-- Experience / Education Section -->
+    <section class="experience-area system-section" id="experience-screen" data-reveal>
+      <div class="experience-container">
+        <h2 class="experience-title">Experience & Education</h2>
+        <div class="experience-list">
+          <article class="experience-card">
+            <div class="experience-meta">2024 · Product Internship</div>
+            <h3>Product Intern — Placeholder Company</h3>
+            <p>Scoped MVP requirements, wrote PRDs, and partnered with engineering to ship key flows.</p>
+          </article>
+          <article class="experience-card">
+            <div class="experience-meta">2022–2025 · B.Tech</div>
+            <h3>Computer Science — Placeholder University</h3>
+            <p>Focused on data-driven products, UX design systems, and AI-assisted prototyping.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider" aria-hidden="true"></div>
+
     <!-- Left side vertical navigation buttons -->
     <nav class="nav-bar">
-      <button class="nav-btn nav-home active" aria-label="Home">
-        ●
-      </button>
-      <button class="nav-btn nav-overview" aria-label="Overview">
-        ▢
+      <button class="nav-btn nav-about active" aria-label="About">
+        ✦
       </button>
       <button class="nav-btn nav-skills" aria-label="Skills">
         ⬙
+      </button>
+      <button class="nav-btn nav-overview" aria-label="Projects">
+        ▢
+      </button>
+      <button class="nav-btn nav-experience" aria-label="Experience">
+        ✶
+      </button>
+      <button class="nav-btn nav-contact" aria-label="Contact">
+        ✉
+      </button>
+      <button class="nav-btn nav-classic" aria-label="Classic View">
+        ◌
       </button>
     </nav>
 
@@ -389,14 +436,85 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
       <div class="menu-content">
         <div class="menu-header">
           <h2>Menu</h2>
-          <button class="menu-close" id="menu-close">✕</button>
         </div>
         <ul class="menu-items">
-          <li><a href="#" class="menu-item" data-section="home">Home</a></li>
-          <li><a href="#" class="menu-item" data-section="overview">Projects</a></li>
+          <li><a href="#" class="menu-item" data-section="about">About</a></li>
           <li><a href="#" class="menu-item" data-section="skills">Skills</a></li>
+          <li><a href="#" class="menu-item" data-section="overview">Projects</a></li>
+          <li><a href="#" class="menu-item" data-section="experience">Experience</a></li>
           <li><a href="#" class="menu-item" data-section="contact">Contact</a></li>
+          <li><a href="#" class="menu-item" data-section="classic">Classic View</a></li>
         </ul>
+        <div class="menu-controls" aria-label="Cinematic presets">
+          <div class="menu-control">
+            <label for="cinematic-theme">Cinematic Preset</label>
+            <select id="cinematic-theme" class="menu-select">
+              <option value="neo-noir">Neo noir tech</option>
+              <option value="warm-filmic">Warm filmic</option>
+              <option value="futurist-minimal">Futurist minimal</option>
+              <option value="nebula-dream">Nebula dream</option>
+              <option value="graphite-studio">Graphite studio</option>
+              <option value="aurora-haze">Aurora haze</option>
+            </select>
+          </div>
+          <div class="menu-control">
+            <label for="motion-intensity">Motion Intensity</label>
+            <select id="motion-intensity" class="menu-select">
+              <option value="subtle">Subtle</option>
+              <option value="medium">Medium</option>
+              <option value="bold">Bold</option>
+            </select>
+          </div>
+          <div class="menu-control menu-toggle-row">
+            <label class="menu-toggle-label" for="audio-reactive-toggle">Audio reactive glow</label>
+            <input type="checkbox" id="audio-reactive-toggle" class="menu-toggle-input" checked>
+          </div>
+        </div>
+        <div class="menu-controls menu-controls--shapes" aria-label="Particle shape controls">
+          <div class="menu-control">
+            <label for="shape-s-amplitude">S Flow</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-s-amplitude" class="menu-slider" min="0.3" max="0.6" step="0.01" value="0.46">
+              <span class="menu-output" id="shape-s-amplitude-value">0.46</span>
+            </div>
+          </div>
+          <div class="menu-control">
+            <label for="shape-s-stroke">S Thickness</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-s-stroke" class="menu-slider" min="0.12" max="0.28" step="0.01" value="0.18">
+              <span class="menu-output" id="shape-s-stroke-value">0.18</span>
+            </div>
+          </div>
+          <div class="menu-control">
+            <label for="shape-s-cap">S End Roundness</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-s-cap" class="menu-slider" min="0.3" max="0.8" step="0.02" value="0.5">
+              <span class="menu-output" id="shape-s-cap-value">0.50</span>
+            </div>
+          </div>
+          <div class="menu-control">
+            <label for="shape-e-thickness">E Thickness</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-e-thickness" class="menu-slider" min="0.2" max="0.38" step="0.01" value="0.28">
+              <span class="menu-output" id="shape-e-thickness-value">0.28</span>
+            </div>
+          </div>
+          <div class="menu-control">
+            <label for="shape-e-spine">E Spine Width</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-e-spine" class="menu-slider" min="1" max="1.3" step="0.02" value="1.1">
+              <span class="menu-output" id="shape-e-spine-value">1.10</span>
+            </div>
+          </div>
+          <div class="menu-control">
+            <label for="shape-a-stroke">A Thickness</label>
+            <div class="menu-slider-row">
+              <input type="range" id="shape-a-stroke" class="menu-slider" min="0.14" max="0.28" step="0.01" value="0.2">
+              <span class="menu-output" id="shape-a-stroke-value">0.20</span>
+            </div>
+          </div>
+          <button type="button" class="menu-reset" id="shape-reset">Reset Shapes</button>
+        </div>
         <div class="menu-socials">
           <a href="#" class="social-link" id="menu-linkedin">LinkedIn</a>
           <a href="#" class="social-link" id="menu-github">GitHub</a>
@@ -456,9 +574,111 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
       </div>
       <div class="tree-label" id="tree-label">0 projects</div>
     </div>
+
+    <!-- Classic View (previous home) -->
+    <section class="home-area classic-area system-section" id="classic-screen" data-reveal>
+      <div class="home-content">
+        <div class="home-left">
+          <p class="hello-text">Classic View</p>
+          <h2 class="name-text" id="name-text">Yatharth Rathi</h2>
+          <p class="role-text">
+            Product Manager in the making
+          </p>
+          <p class="sub-text">
+            Turning ideas into products people love.
+          </p>
+          
+          <div class="home-actions">
+            <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
+              📄 View CV
+            </a>
+          </div>
+
+          <div class="contact-section">
+            <h3 class="contact-title">Get in Touch</h3>
+            <div class="contact-links">
+              <a href="mailto:yatharthrathi08@gmail.com" class="contact-link" id="email-link">
+                ✉️ Email
+              </a>
+              <a href="https://www.linkedin.com/in/yatharth-rathi-781aa627b/" class="contact-link" id="linkedin-link" target="_blank" rel="noopener noreferrer">
+                💼 LinkedIn
+              </a>
+              <a href="https://github.com/Yatharth80" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
+                💻 GitHub
+              </a>
+              <a href="#" class="contact-link" id="resume-link" target="_blank" rel="noopener noreferrer">
+                📄 Resume
+              </a>
+              <a href="certificates.html" class="contact-link" id="certificates-link">
+                🎓 Certificates
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-right">
+          <div class="profile-photo-wrapper" data-portrait="profile-photo.jpeg" data-depth="profile-photo-depth.png">
+            <img src="profile-photo.jpeg" alt="Yatharth Rathi" class="profile-photo">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Micro-ecosystem footer -->
+    <footer class="ecosystem-footer" id="connect-screen" aria-label="Social ecosystem">
+      <div class="ecosystem-shell">
+        <h2 class="ecosystem-heading">Let's Connect</h2>
+
+        <div class="ecosystem-orbs" aria-label="Social orbs">
+          <div class="eco-slide">
+            <a class="eco-orb eco-orb-constellation" href="https://www.linkedin.com/in/yatharth-rathi-781aa627b/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <canvas class="eco-orb-canvas" data-orb="linkedin" aria-hidden="true"></canvas>
+            </a>
+            <div class="eco-orb-logo eco-orb-logo--linkedin" aria-hidden="true">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img">
+                <path d="M4.98 3.5C4.98 4.88 3.87 6 2.49 6S0 4.88 0 3.5 1.11 1 2.49 1 4.98 2.12 4.98 3.5zM.5 8.25h3.98v14.5H.5V8.25zM8.5 8.25h3.82v1.98h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1v8.97h-3.98v-7.95c0-1.9-.03-4.35-2.65-4.35-2.65 0-3.05 2.07-3.05 4.21v8.09H8.5V8.25z" />
+              </svg>
+            </div>
+            <span class="eco-orb-name">LinkedIn</span>
+          </div>
+
+          <div class="eco-slide">
+            <a class="eco-orb eco-orb-constellation" href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X">
+              <canvas class="eco-orb-canvas" data-orb="x" aria-hidden="true"></canvas>
+            </a>
+            <div class="eco-orb-logo eco-orb-logo--x" aria-hidden="true">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img">
+                <path d="M5 4.5h3.3l3.7 5 3.6-5H19l-5.2 6.8L19.3 19h-3.3l-4-5.4L8 19H4.7l5.4-7.3L5 4.5z" />
+              </svg>
+            </div>
+            <span class="eco-orb-name">Twitter / X</span>
+          </div>
+
+          <div class="eco-slide">
+            <a class="eco-orb eco-orb-constellation" href="https://github.com/Yatharth80" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <canvas class="eco-orb-canvas" data-orb="github" aria-hidden="true"></canvas>
+            </a>
+            <div class="eco-orb-logo eco-orb-logo--github" aria-hidden="true">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img">
+                <path d="M12 .5C5.65.5.5 5.74.5 12.27c0 5.23 3.44 9.66 8.2 11.23.6.11.82-.26.82-.58 0-.28-.01-1.02-.02-2-3.34.74-4.04-1.67-4.04-1.67-.55-1.42-1.34-1.8-1.34-1.8-1.1-.77.09-.75.09-.75 1.22.09 1.86 1.28 1.86 1.28 1.08 1.9 2.84 1.35 3.53 1.03.11-.8.42-1.35.76-1.66-2.66-.31-5.47-1.36-5.47-6.06 0-1.34.46-2.43 1.23-3.29-.12-.31-.53-1.57.12-3.27 0 0 1.01-.33 3.3 1.26.96-.27 1.99-.4 3.01-.41 1.02.01 2.05.14 3.01.41 2.29-1.59 3.3-1.26 3.3-1.26.65 1.7.24 2.96.12 3.27.76.86 1.23 1.95 1.23 3.29 0 4.71-2.82 5.74-5.5 6.05.44.38.83 1.13.83 2.28 0 1.65-.01 2.98-.01 3.39 0 .32.22.7.82.58 4.76-1.57 8.2-6 8.2-11.23C23.5 5.74 18.35.5 12 .5z" />
+              </svg>
+            </div>
+            <span class="eco-orb-name">GitHub</span>
+          </div>
+        </div>
+
+        <div class="ecosystem-caption">Orbit to explore — click to connect.</div>
+      </div>
+    </footer>
+
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/math/MeshSurfaceSampler.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="script.js"></script>
 
 </body>
