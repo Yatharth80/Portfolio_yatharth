@@ -48,15 +48,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <polygon points="25,145 20,135 30,135" fill="#5eead4" />
   </svg>
 
-  <svg class="curvy-arrow overview-arrow" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-    <path d="M 140,25 Q 100,15 60,20 Q 25,25 10,25" 
-          stroke="#5eead4" 
-          stroke-width="2.5" 
-          fill="none" 
-          stroke-linecap="round" />
-    <polygon points="5,25 15,20 15,30" fill="#5eead4" />
-  </svg>
-
   <div class="app-shell">
     <section class="cosmic-hero system-section constellation-section" id="cosmic-hero" data-reveal>
       <canvas id="cosmic-sky" class="cosmic-sky" aria-hidden="true"></canvas>
@@ -65,23 +56,23 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
         <h1 class="cosmic-title">Yatharth Rathi</h1>
         <p class="cosmic-tagline">Exploring ideas across code and creativity.</p>
         <div class="cosmic-nav" aria-label="Primary">
+          <button class="cosmic-nav-star" type="button" data-target="overview-screen" aria-label="Projects">
+            <span class="cosmic-nav-label">Projects</span>
+          </button>
           <button class="cosmic-nav-star" type="button" data-target="about-screen" aria-label="About">
             <span class="cosmic-nav-label">About</span>
           </button>
           <button class="cosmic-nav-star" type="button" data-target="skills-screen" aria-label="Skills">
             <span class="cosmic-nav-label">Skills</span>
           </button>
-          <button class="cosmic-nav-star" type="button" data-target="overview-screen" aria-label="Projects">
-            <span class="cosmic-nav-label">Projects</span>
-          </button>
           <button class="cosmic-nav-star" type="button" data-target="experience-screen" aria-label="Experience">
             <span class="cosmic-nav-label">Experience</span>
           </button>
-          <button class="cosmic-nav-star" type="button" data-target="connect-screen" aria-label="Contact">
-            <span class="cosmic-nav-label">Contact</span>
-          </button>
           <button class="cosmic-nav-star" type="button" data-target="classic-screen" aria-label="Classic View">
             <span class="cosmic-nav-label">Classic</span>
+          </button>
+          <button class="cosmic-nav-star" type="button" data-target="connect-screen" aria-label="Contact">
+            <span class="cosmic-nav-label">Contact</span>
           </button>
         </div>
         <div class="cosmic-hint">Scroll to explore</div>
@@ -90,8 +81,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     </section>
 
     <!-- Overview-style slider for your projects -->
-    <main class="overview-area system-section constellation-section" id="overview-screen" data-reveal>
-      <canvas class="section-constellation" data-constellation="shani" aria-hidden="true"></canvas>
+    <main class="overview-area system-section" id="overview-screen" data-reveal>
       <div class="swiper">
 
         <div class="swiper-wrapper">
@@ -161,7 +151,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
     <!-- About Section -->
     <section class="about-area system-section constellation-section" id="about-screen" data-reveal>
-      <canvas class="section-constellation" data-constellation="ursa" aria-hidden="true"></canvas>
+      <canvas class="section-constellation" data-constellation="cancer" aria-hidden="true"></canvas>
       <div class="about-container">
         <h2 class="about-title">About Me</h2>
         <p class="about-lead">
@@ -186,7 +176,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
     <!-- Skills Section -->
     <main class="skills-area system-section constellation-section" id="skills-screen" data-reveal>
-      <canvas class="section-constellation" data-constellation="cassiopeia" aria-hidden="true"></canvas>
+      <canvas class="section-constellation" data-constellation="libra" aria-hidden="true"></canvas>
       <div class="skills-container">
         <h1 class="skills-title">Skills & Expertise</h1>
         
@@ -371,17 +361,18 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     </div>
 
     <!-- Experience / Education Section -->
-    <section class="experience-area system-section" id="experience-screen" data-reveal>
+    <section class="experience-area system-section constellation-section" id="experience-screen" data-reveal>
+      <canvas class="section-constellation" data-constellation="aries" aria-hidden="true"></canvas>
       <div class="experience-container">
         <h2 class="experience-title">Experience & Education</h2>
         <div class="experience-list">
           <article class="experience-card">
-            <div class="experience-meta">2024 · Product Internship</div>
+            <div class="experience-meta">2025 · Product Internship</div>
             <h3>Product Intern — Placeholder Company</h3>
             <p>Scoped MVP requirements, wrote PRDs, and partnered with engineering to ship key flows.</p>
           </article>
           <article class="experience-card">
-            <div class="experience-meta">2022–2025 · B.Tech</div>
+            <div class="experience-meta">2023–2027 · B.Tech</div>
             <h3>Computer Science — Placeholder University</h3>
             <p>Focused on data-driven products, UX design systems, and AI-assisted prototyping.</p>
           </article>
@@ -393,34 +384,28 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
     <!-- Left side vertical navigation buttons -->
     <nav class="nav-bar">
-      <button class="nav-btn nav-about active" aria-label="About">
-        ✦
-      </button>
-      <button class="nav-btn nav-skills" aria-label="Skills">
-        ⬙
-      </button>
-      <button class="nav-btn nav-overview" aria-label="Projects">
+      <button class="nav-btn nav-overview active" aria-label="Projects" data-label="Projects" title="Projects">
         ▢
       </button>
-      <button class="nav-btn nav-experience" aria-label="Experience">
+      <button class="nav-btn nav-about" aria-label="About" data-label="About" title="About">
+        ✦
+      </button>
+      <button class="nav-btn nav-skills" aria-label="Skills" data-label="Skills" title="Skills">
+        ⬙
+      </button>
+      <button class="nav-btn nav-experience" aria-label="Experience" data-label="Experience" title="Experience">
         ✶
       </button>
-      <button class="nav-btn nav-contact" aria-label="Contact">
-        ✉
-      </button>
-      <button class="nav-btn nav-classic" aria-label="Classic View">
+      <button class="nav-btn nav-classic" aria-label="Classic View" data-label="Classic" title="Classic">
         ◌
+      </button>
+      <button class="nav-btn nav-contact" aria-label="Contact" data-label="Contact" title="Contact">
+        ✉
       </button>
     </nav>
 
-    <!-- Arrow hint pointing to overview button -->
-    <div class="overview-hint" id="overview-hint">
-      <div class="hint-arrow">→</div>
-      <div class="hint-text">View Projects</div>
-    </div>
-
     <!-- Audio Visualizer Button - Bottom Left -->
-    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
+    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound" data-label="Sound" title="Sound">
       <canvas id="audio-visualizer" class="visualizer-canvas"></canvas>
       <div class="sound-line"></div>
     </button>
@@ -438,12 +423,12 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
           <h2>Menu</h2>
         </div>
         <ul class="menu-items">
+          <li><a href="#" class="menu-item" data-section="overview">Projects</a></li>
           <li><a href="#" class="menu-item" data-section="about">About</a></li>
           <li><a href="#" class="menu-item" data-section="skills">Skills</a></li>
-          <li><a href="#" class="menu-item" data-section="overview">Projects</a></li>
           <li><a href="#" class="menu-item" data-section="experience">Experience</a></li>
-          <li><a href="#" class="menu-item" data-section="contact">Contact</a></li>
           <li><a href="#" class="menu-item" data-section="classic">Classic View</a></li>
+          <li><a href="#" class="menu-item" data-section="contact">Contact</a></li>
         </ul>
         <div class="menu-controls" aria-label="Cinematic presets">
           <div class="menu-control">
@@ -590,7 +575,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
           
           <div class="home-actions">
             <a href="#" id="cv-link" class="cv-button" target="_blank" rel="noopener noreferrer">
-              📄 View CV
+              📄 Resume
             </a>
           </div>
 
@@ -605,9 +590,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
               </a>
               <a href="https://github.com/Yatharth80" class="contact-link" id="github-link" target="_blank" rel="noopener noreferrer">
                 💻 GitHub
-              </a>
-              <a href="#" class="contact-link" id="resume-link" target="_blank" rel="noopener noreferrer">
-                📄 Resume
               </a>
               <a href="certificates.html" class="contact-link" id="certificates-link">
                 🎓 Certificates

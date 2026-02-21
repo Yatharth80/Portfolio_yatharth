@@ -90,6 +90,7 @@ class ConstellationOrb {
     this.hovered = 0;
     this.hoverTarget = 0;
     this.time = 0;
+    this.isVisible = true;
 
     this.resize = this.resize.bind(this);
     this.animate = this.animate.bind(this);
@@ -105,6 +106,18 @@ class ConstellationOrb {
     this.canvas.addEventListener('pointerleave', this.onLeave);
     this.orb.addEventListener('pointermove', this.onMove);
     this.canvas.addEventListener('pointermove', this.onMove);
+
+    if ('IntersectionObserver' in window) {
+      this.visibilityObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          this.isVisible = !!(entry && entry.isIntersecting);
+        },
+        { threshold: 0.02 }
+      );
+      this.visibilityObserver.observe(this.orb);
+    }
+
     if (reducedMotionMode) {
       this.render(0);
     } else {
@@ -290,6 +303,11 @@ class ConstellationOrb {
   }
 
   animate(time) {
+    if (!this.isVisible || document.hidden) {
+      requestAnimationFrame(this.animate);
+      return;
+    }
+
     const seconds = time * 0.001;
     this.render(seconds);
     requestAnimationFrame(this.animate);
@@ -385,6 +403,58 @@ const SECTION_CONSTELLATIONS = {
       [4, 0],
     ],
   },
+  cancer: {
+    name: 'Cancer',
+    points: [
+      { x: 0.50, y: 0.20 },
+      { x: 0.51, y: 0.30 },
+      { x: 0.50, y: 0.44 },
+      { x: 0.33, y: 0.61 },
+      { x: 0.60, y: 0.52 },
+      { x: 0.67, y: 0.67 },
+    ],
+    edges: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [2, 4],
+      [4, 5],
+    ],
+  },
+  aries: {
+    name: 'Aries',
+    points: [
+      { x: 0.70, y: 0.58 },
+      { x: 0.70, y: 0.52 },
+      { x: 0.58, y: 0.38 },
+      { x: 0.32, y: 0.24 },
+    ],
+    edges: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+    ],
+  },
+  libra: {
+    name: 'Libra',
+    starNames: ['Zubeneschamali', 'Zubenelhakrabi', 'Zubenelgenubi', 'Brachium', 'Upsilon Librae', 'Iota Librae'],
+    points: [
+      { x: 0.58, y: 0.22 },
+      { x: 0.44, y: 0.36 },
+      { x: 0.60, y: 0.46 },
+      { x: 0.52, y: 0.62 },
+      { x: 0.43, y: 0.64 },
+      { x: 0.44, y: 0.54 },
+    ],
+    edges: [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+      [2, 3],
+      [1, 5],
+      [5, 4],
+    ],
+  },
 };
 
 const SECTION_CONSTELLATION_SETS = {
@@ -393,6 +463,9 @@ const SECTION_CONSTELLATION_SETS = {
   cassiopeia: ['cassiopeia'],
   shani: ['shani'],
   lyra: ['lyra'],
+  cancer: ['cancer'],
+  aries: ['aries'],
+  libra: ['libra'],
 };
 
 class SectionConstellation {
@@ -406,12 +479,25 @@ class SectionConstellation {
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.stars = [];
     this.time = 0;
+    this.isVisible = true;
 
     this.resize = this.resize.bind(this);
     this.animate = this.animate.bind(this);
 
     this.resize();
     window.addEventListener('resize', this.resize);
+
+    if ('IntersectionObserver' in window) {
+      this.visibilityObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          this.isVisible = !!(entry && entry.isIntersecting);
+        },
+        { threshold: 0.02 }
+      );
+      this.visibilityObserver.observe(this.canvas);
+    }
+
     if (reducedMotionMode) {
       this.render(0);
     } else {
@@ -461,16 +547,21 @@ class SectionConstellation {
     const padding = Math.min(this.width, this.height) * 0.1;
     const width = this.width - padding * 2;
     const height = this.height - padding * 2;
+    const isLibra = def.name === 'Libra';
+    const jitterX = isLibra ? 0 : 3;
+    const jitterY = isLibra ? 0 : 3;
+    const wholeDriftX = isLibra ? 0 : 0;
+    const wholeDriftY = isLibra ? 0 : 0;
     const points = def.points.map((pt, idx) => {
-      const x = padding + pt.x * width + Math.sin(time * 0.9 + idx) * 3 + offsetX;
-      const y = padding + pt.y * height + Math.cos(time * 0.8 + idx) * 3 + offsetY;
+      const x = padding + pt.x * width + Math.sin(time * 0.9 + idx) * jitterX + offsetX + wholeDriftX;
+      const y = padding + pt.y * height + Math.cos(time * 0.8 + idx) * jitterY + offsetY + wholeDriftY;
       return { x, y };
     });
 
-    this.ctx.strokeStyle = 'rgba(255, 200, 122, 0.6)';
-    this.ctx.lineWidth = 1;
-    this.ctx.shadowColor = 'rgba(255, 200, 122, 0.5)';
-    this.ctx.shadowBlur = 6;
+    this.ctx.strokeStyle = isLibra ? 'rgba(255, 230, 190, 0.92)' : 'rgba(255, 200, 122, 0.6)';
+    this.ctx.lineWidth = isLibra ? 2 : 1;
+    this.ctx.shadowColor = isLibra ? 'rgba(255, 232, 198, 0.78)' : 'rgba(255, 200, 122, 0.5)';
+    this.ctx.shadowBlur = isLibra ? 12 : 6;
 
     def.edges.forEach((edge) => {
       const a = points[edge[0]];
@@ -482,12 +573,30 @@ class SectionConstellation {
     });
 
     points.forEach((pt, idx) => {
-      const pulse = 0.7 + 0.3 * Math.sin(time * 1.2 + idx);
-      const radius = 1.6 + pulse * 1.2;
-      this.ctx.fillStyle = `rgba(255, 214, 170, ${0.7 * pulse})`;
+      const pulse = 0.7 + 0.3 * Math.sin(time * 1.2 + idx * 1.05);
+      const isLibraPrimary = isLibra && idx <= 2;
+      const radius = isLibra
+        ? (isLibraPrimary ? 2.9 + pulse * 1.55 : 2.0 + pulse * 1.05)
+        : 1.6 + pulse * 1.2;
+      const alpha = isLibra
+        ? (isLibraPrimary ? 1.0 * pulse : 0.68 * pulse)
+        : 0.7 * pulse;
+      this.ctx.fillStyle = `rgba(255, 228, 188, ${alpha})`;
       this.ctx.beginPath();
       this.ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
       this.ctx.fill();
+
+      if (isLibra) {
+        const haloScale = isLibraPrimary ? 4.1 : 3.0;
+        const haloAlpha = isLibraPrimary ? 0.5 : 0.26;
+        const halo = this.ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, radius * haloScale);
+        halo.addColorStop(0, `rgba(255, 230, 190, ${haloAlpha * pulse})`);
+        halo.addColorStop(1, 'rgba(255, 230, 190, 0)');
+        this.ctx.fillStyle = halo;
+        this.ctx.beginPath();
+        this.ctx.arc(pt.x, pt.y, radius * haloScale, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
     });
   }
 
@@ -499,12 +608,17 @@ class SectionConstellation {
       const def = SECTION_CONSTELLATIONS[key];
       if (!def) return;
       const offsetX = (index - (this.sets.length - 1) / 2) * this.width * spread;
-      const offsetY = Math.sin(time * 0.2 + index) * this.height * 0.02;
+      const offsetY = (def.name === 'Libra' || def.name === 'Aries') ? 0 : Math.sin(time * 0.2 + index) * this.height * 0.02;
       this.drawConstellation(def, time, offsetX, offsetY);
     });
   }
 
   animate(time) {
+    if (!this.isVisible || document.hidden) {
+      requestAnimationFrame(this.animate);
+      return;
+    }
+
     this.render(time * 0.001);
     requestAnimationFrame(this.animate);
   }
@@ -1096,6 +1210,11 @@ class SoundManager {
 
   updateUI() {
     if (this.toggle) {
+      const soundStateLabel = this.isMuted ? 'Sound Off' : 'Sound On';
+      this.toggle.setAttribute('data-label', soundStateLabel);
+      this.toggle.setAttribute('title', soundStateLabel);
+      this.toggle.setAttribute('aria-label', soundStateLabel);
+
       if (this.isMuted) {
         this.toggle.classList.add('muted');
         this.toggle.classList.remove('playing');
@@ -1458,35 +1577,58 @@ class FluidCursorManager {
     this.nameChars = [];
     this.cosmicChars = [];
     this.charVelocities = {};
+    this.charCenters = {};
     this.attractRadius = 150;      // How far cursor attracts
     this.repelRadius = 80;         // How far before hard repel
     this.nameRepelRadius = 100;
     this.friction = 0.15;          // Higher = more gooey/sticky
+    this.pendingNameUpdate = false;
+    this.pendingCenterRefresh = false;
+    this.scheduleNameUpdate = this.scheduleNameUpdate.bind(this);
+    this.scheduleCenterRefresh = this.scheduleCenterRefresh.bind(this);
     this.init();
   }
 
   init() {
-    // Track all text and interactive elements for magnetic effect
-    this.magneticElements = document.querySelectorAll(
-      'h1, h2, h3, p, .role-text, .hello-text, .sub-text, .project-link, .cv-button, .contact-link'
-    );
+    // Keep only name repulsion behavior (disable magnetic shifting on other elements)
+    this.magneticElements = [];
 
     // Convert name text to individual characters
     this.setupNameCharacters();
+    this.scheduleCenterRefresh();
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('pointermove', (e) => {
       this.prevMouseX = this.mouseX;
       this.prevMouseY = this.mouseY;
       this.mouseX = e.clientX;
       this.mouseY = e.clientY;
-      this.updateMagneticElements();
-      this.updateNameCharacters();
-      this.createWaveRipple(e.clientX, e.clientY);
-    });
+      this.scheduleNameUpdate();
+    }, { passive: true });
+
+    window.addEventListener('resize', this.scheduleCenterRefresh, { passive: true });
+    window.addEventListener('scroll', this.scheduleCenterRefresh, { passive: true });
+    window.addEventListener('load', this.scheduleCenterRefresh, { passive: true });
 
     document.addEventListener('mouseleave', () => {
-      this.resetElements();
       this.resetNameCharacters();
+    });
+  }
+
+  scheduleNameUpdate() {
+    if (this.pendingNameUpdate) return;
+    this.pendingNameUpdate = true;
+    requestAnimationFrame(() => {
+      this.pendingNameUpdate = false;
+      this.updateNameCharacters();
+    });
+  }
+
+  scheduleCenterRefresh() {
+    if (this.pendingCenterRefresh) return;
+    this.pendingCenterRefresh = true;
+    requestAnimationFrame(() => {
+      this.pendingCenterRefresh = false;
+      this.refreshCharCenters();
     });
   }
 
@@ -1512,18 +1654,35 @@ class FluidCursorManager {
       el.appendChild(span);
 
       this.charVelocities[`${keyPrefix}-${index}`] = { x: 0, y: 0 };
+      this.charCenters[`${keyPrefix}-${index}`] = { x: 0, y: 0 };
       chars.push(span);
     });
 
     return chars;
   }
 
+  refreshCharCenters() {
+    const allChars = [...this.nameChars, ...this.cosmicChars];
+    allChars.forEach((char) => {
+      const key = char.dataset.index;
+      if (!key) return;
+      const rect = char.getBoundingClientRect();
+      this.charCenters[key] = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+    });
+  }
+
   updateNameCharacters() {
     const allChars = [...this.nameChars, ...this.cosmicChars];
     allChars.forEach((char) => {
-      const rect = char.getBoundingClientRect();
-      const charCenterX = rect.left + rect.width / 2;
-      const charCenterY = rect.top + rect.height / 2;
+      const key = char.dataset.index;
+      if (!key || !this.charVelocities[key]) return;
+
+      const center = this.charCenters[key] || { x: 0, y: 0 };
+      const charCenterX = center.x;
+      const charCenterY = center.y;
 
       const distX = this.mouseX - charCenterX;
       const distY = this.mouseY - charCenterY;
@@ -1553,9 +1712,6 @@ class FluidCursorManager {
       }
 
       // Apply velocity with friction for gooey feel
-      const key = char.dataset.index;
-      if (!key || !this.charVelocities[key]) return;
-
       this.charVelocities[key].x += (targetX - this.charVelocities[key].x) * this.friction;
       this.charVelocities[key].y += (targetY - this.charVelocities[key].y) * this.friction;
 
@@ -1642,10 +1798,7 @@ class FluidCursorManager {
 class CustomCursor {
   constructor() {
     this.cursor = null;
-    this.mouseX = 0;
-    this.mouseY = 0;
-    this.trailX = 0;
-    this.trailY = 0;
+    this.onPointerMove = this.onPointerMove.bind(this);
     this.isActive = false;
     this.init();
   }
@@ -1656,19 +1809,17 @@ class CustomCursor {
     this.cursor.classList.add('cursor');
     document.body.appendChild(this.cursor);
 
-    // Track mouse movement
-    document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+    // Track pointer movement with a single high-frequency source to avoid duplicate updates
+    const moveEvent = 'onpointerrawupdate' in window ? 'pointerrawupdate' : 'pointermove';
+    document.addEventListener(moveEvent, this.onPointerMove, { passive: true });
     
     // Detect interactive elements
     this.attachInteractiveListeners();
     
-    // Animate cursor
-    this.animate();
   }
 
-  onMouseMove(e) {
-    this.mouseX = e.clientX;
-    this.mouseY = e.clientY;
+  onPointerMove(e) {
+    this.cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
   }
 
   attachInteractiveListeners() {
@@ -1688,36 +1839,6 @@ class CustomCursor {
     });
   }
 
-  createTrail() {
-    const trail = document.createElement('div');
-    trail.classList.add('cursor-trail');
-    trail.style.left = this.trailX + 'px';
-    trail.style.top = this.trailY + 'px';
-    document.body.appendChild(trail);
-
-    // Fade out and remove trail
-    setTimeout(() => {
-      trail.style.opacity = '0';
-      trail.style.transition = 'opacity 0.6s ease';
-      setTimeout(() => trail.remove(), 600);
-    }, 0);
-  }
-
-  animate() {
-    // Smoothly follow cursor with enhanced easing for fluid effect
-    this.trailX += (this.mouseX - this.trailX) * 0.25;
-    this.trailY += (this.mouseY - this.trailY) * 0.25;
-
-    this.cursor.style.left = this.trailX + 'px';
-    this.cursor.style.top = this.trailY + 'px';
-
-    // Create more frequent trail particles for denser effect
-    if (Math.random() > 0.6) {
-      this.createTrail();
-    }
-
-    requestAnimationFrame(() => this.animate());
-  }
 }
 
 // Initialize custom cursor when DOM is ready
@@ -1730,13 +1851,7 @@ if (document.readyState === 'loading') {
 }
 
 // Initialize fluid cursor distortion when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    new FluidCursorDistortion();
-  });
-} else {
-  new FluidCursorDistortion();
-}
+// Fluid cursor distortion disabled for reliable click interactions.
 
 // ===== SYSTEM REVEAL OBSERVER =====
 let lastActiveSection = null;
@@ -2009,46 +2124,49 @@ if (document.readyState === 'loading') {
 
 // ===== END THREE.JS DEPTH PORTRAIT =====
 
-const swiper = new Swiper('.swiper', {
-  slidesPerView: 1.1,
-  centeredSlides: true,
-  spaceBetween: 26,
-  grabCursor: true,
+let swiper = null;
+if (window.Swiper && document.querySelector('.swiper')) {
+  swiper = new Swiper('.swiper', {
+    slidesPerView: 1.1,
+    centeredSlides: true,
+    spaceBetween: 26,
+    grabCursor: true,
 
-  effect: 'coverflow',
-  coverflowEffect: {
-    rotate: 8,
-    depth: 180,
-    stretch: 0,
-    modifier: 1,
-    slideShadows: false,
-  },
-
-  keyboard: {
-    enabled: true,
-  },
-
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
-
-  pagination: {
-    el: '.swiper-pagination',
-    clickable: true,
-  },
-
-  breakpoints: {
-    768: {
-      slidesPerView: 1.5,
-      spaceBetween: 32,
+    effect: 'coverflow',
+    coverflowEffect: {
+      rotate: 8,
+      depth: 180,
+      stretch: 0,
+      modifier: 1,
+      slideShadows: false,
     },
-    1024: {
-      slidesPerView: 1.8,
-      spaceBetween: 40,
+
+    keyboard: {
+      enabled: true,
     },
-  },
-});
+
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+
+    breakpoints: {
+      768: {
+        slidesPerView: 1.5,
+        spaceBetween: 32,
+      },
+      1024: {
+        slidesPerView: 1.8,
+        spaceBetween: 40,
+      },
+    },
+  });
+}
 
 // Scroll-based sections: About, Skills, Projects, Experience, Contact, Classic
 let aboutScreen, skillsScreen, overviewScreen, experienceScreen, contactScreen, classicScreen;
@@ -2217,6 +2335,18 @@ if (document.readyState === 'loading') {
 // ===== CONTINUOUS SCROLL LOOP =====
 let loopScrollLock = false;
 let loopScrollPending = false;
+let loopLastJump = 0;
+const LOOP_BUFFER = 96;
+const LOOP_COOLDOWN_MS = 220;
+
+function jumpScrollTo(targetTop) {
+  const root = document.documentElement;
+  root.classList.add('scroll-jump');
+  window.scrollTo({ top: targetTop, behavior: 'auto' });
+  requestAnimationFrame(() => {
+    root.classList.remove('scroll-jump');
+  });
+}
 
 function handleScrollLoop() {
   loopScrollPending = false;
@@ -2226,12 +2356,19 @@ function handleScrollLoop() {
   const maxScroll = doc.scrollHeight - window.innerHeight;
   if (maxScroll <= 0) return;
 
-  const buffer = 2;
+  const buffer = LOOP_BUFFER;
   const top = window.scrollY || doc.scrollTop || 0;
+  const now = performance.now();
 
-  if (top >= maxScroll - buffer) {
+  if (now - loopLastJump < LOOP_COOLDOWN_MS) return;
+
+  const bottomThreshold = maxScroll - buffer;
+
+  if (top >= bottomThreshold) {
     loopScrollLock = true;
-    window.scrollTo({ top: buffer, behavior: 'auto' });
+    loopLastJump = now;
+    const overflow = Math.max(0, top - bottomThreshold);
+    jumpScrollTo(buffer + overflow);
     requestAnimationFrame(() => {
       loopScrollLock = false;
     });
@@ -2240,7 +2377,9 @@ function handleScrollLoop() {
 
   if (top <= buffer) {
     loopScrollLock = true;
-    window.scrollTo({ top: maxScroll - buffer, behavior: 'auto' });
+    loopLastJump = now;
+    const underflow = Math.max(0, buffer - top);
+    jumpScrollTo(Math.max(0, bottomThreshold - underflow));
     requestAnimationFrame(() => {
       loopScrollLock = false;
     });
@@ -2672,12 +2811,12 @@ class CursorRepelEffect {
 // Initialize cursor repel effect when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new CursorRepelEffect();
+    // Cursor repel effect disabled for smoother scrolling and reliable interactions.
     particleBackgroundInstance = new ParticleBackground();
     if (particleBackgroundInstance) particleBackgroundInstance.setSection('home');
   });
 } else {
-  new CursorRepelEffect();
+  // Cursor repel effect disabled for smoother scrolling and reliable interactions.
   particleBackgroundInstance = new ParticleBackground();
   if (particleBackgroundInstance) particleBackgroundInstance.setSection('home');
 }
@@ -2688,7 +2827,9 @@ class ParticleBackground {
     this.canvas = document.getElementById('particle-canvas');
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
     this.particles = [];
-    this.particleCount = 12000;
+    const viewportArea = window.innerWidth * window.innerHeight;
+    const baseCount = Math.floor(viewportArea / 900);
+    this.particleCount = (reducedMotionMode ? 900 : Math.max(1400, Math.min(2800, baseCount))) + 500;
     this.connectionDistance = 50;
     this.connectionStride = 8;
     this.animationId = null;
@@ -2696,6 +2837,8 @@ class ParticleBackground {
     this.formProgress = 0;
     this.targetFormProgress = 0;
     this.formStrength = 0.03;
+    this.freeScatterOverscan = 0.18;
+    this.freeDispersionBurst = 3.2;
     this.shapeSettings = {
       sAmplitude: 0.46,
       sStrokeScale: 0.18,
@@ -2713,10 +2856,12 @@ class ParticleBackground {
     this.contactPivot = { x: 0, y: 0 };
     this.cursorX = -1e5;
     this.cursorY = -1e5;
-    this.repelRadius = 140;
-    this.repelStrength = 2.2;
+    this.repelRadius = 210;
+    this.repelStrength = 4.3;
     this.isScrolling = false;
+    this.scrollFrameToggle = false;
     this.scrollTimer = null;
+    this.isTabHidden = document.hidden;
     this.resize = this.resize.bind(this);
     this.animate = this.animate.bind(this);
 
@@ -2724,10 +2869,10 @@ class ParticleBackground {
 
     this.resize();
     window.addEventListener('resize', this.resize);
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('pointermove', (e) => {
       this.cursorX = e.clientX;
       this.cursorY = e.clientY;
-    });
+    }, { passive: true });
     document.addEventListener('mouseleave', () => {
       this.cursorX = -1e5;
       this.cursorY = -1e5;
@@ -2743,6 +2888,9 @@ class ParticleBackground {
       },
       { passive: true }
     );
+    document.addEventListener('visibilitychange', () => {
+      this.isTabHidden = document.hidden;
+    });
     this.initParticles();
     this.animate();
   }
@@ -2862,91 +3010,35 @@ class ParticleBackground {
     const pts = [];
     const cx = this.w / 2;
     const cy = this.h / 2;
-    const height = Math.min(300, this.h * 0.55);
-    const width = Math.min(280, this.w * 0.55);
-    const barH = Math.max(40, height * this.shapeSettings.eThicknessScale);
-    const spineW = barH * this.shapeSettings.eSpineRatio;
+    const boxH = Math.min(250, this.h * 0.42);
+    const boxW = Math.min(240, this.w * 0.42);
+    const thickness = Math.max(18, boxH * this.shapeSettings.eThicknessScale * 0.62);
     const step = 6;
 
-    const left = cx - width / 2;
-    const top = cy - height / 2;
-    const spineHeight = height * 0.88;
-    const spineTop = cy - spineHeight / 2;
-    const topBarY = top;
-    const midBarY = top + (height - barH) * 0.5;
-    const bottomBarY = top + height - barH;
-    const topWidth = width;
-    const midWidth = width;
-    const bottomWidth = width;
-    const barArc = Math.max(8, barH * 0.28);
+    const left = cx - boxW / 2;
+    const top = cy - boxH / 2;
+    const bottom = top + boxH;
 
-    const addRoundedRectPoints = (x, y, w, h, r) => {
-      const radius = Math.max(0, Math.min(r, w / 2, h / 2));
-      const innerX1 = x + radius;
-      const innerY1 = y + radius;
-      const innerX2 = x + w - radius;
-      const innerY2 = y + h - radius;
+    const topY = top + thickness * 0.6;
+    const midY = cy;
+    const bottomY = bottom - thickness * 0.6;
 
-      for (let py = y; py <= y + h; py += step) {
-        for (let px = x; px <= x + w; px += step) {
-          const inCore = px >= innerX1 && px <= innerX2 && py >= innerY1 && py <= innerY2;
-          if (inCore) {
-            pts.push({ x: px, y: py });
-            continue;
-          }
+    const topX2 = left + boxW;
+    const midX2 = left + boxW * 0.6;
+    const bottomX2 = left + boxW;
 
-          const dxLeft = px - innerX1;
-          const dxRight = px - innerX2;
-          const dyTop = py - innerY1;
-          const dyBottom = py - innerY2;
-
-          const inTopLeft = dxLeft <= 0 && dyTop <= 0 && dxLeft * dxLeft + dyTop * dyTop <= radius * radius;
-          const inTopRight = dxRight >= 0 && dyTop <= 0 && dxRight * dxRight + dyTop * dyTop <= radius * radius;
-          const inBottomLeft = dxLeft <= 0 && dyBottom >= 0 && dxLeft * dxLeft + dyBottom * dyBottom <= radius * radius;
-          const inBottomRight = dxRight >= 0 && dyBottom >= 0 && dxRight * dxRight + dyBottom * dyBottom <= radius * radius;
-
-          if (inTopLeft || inTopRight || inBottomLeft || inBottomRight) {
-            pts.push({ x: px, y: py });
-          }
+    const addRectPoints = (x1, y1, x2, y2) => {
+      for (let py = y1; py <= y2; py += step) {
+        for (let px = x1; px <= x2; px += step) {
+          pts.push({ x: px, y: py });
         }
       }
     };
 
-    const isInRoundedRect = (px, py, x, y, w, h, r) => {
-      const radius = Math.max(0, Math.min(r, w / 2, h / 2));
-      const innerX1 = x + radius;
-      const innerY1 = y + radius;
-      const innerX2 = x + w - radius;
-      const innerY2 = y + h - radius;
-
-      const clampedX = Math.min(Math.max(px, innerX1), innerX2);
-      const clampedY = Math.min(Math.max(py, innerY1), innerY2);
-      const dx = px - clampedX;
-      const dy = py - clampedY;
-      return dx * dx + dy * dy <= radius * radius;
-    };
-
-    const addCurvedBarPoints = (x, y, w, h, r, arc) => {
-      const radius = Math.max(0, Math.min(r, w / 2, h / 2));
-      for (let px = x; px <= x + w; px += step) {
-        const t = (px - x) / w;
-        const curve = Math.sin(t * Math.PI) * arc;
-        const baseY = y + curve;
-        for (let py = baseY; py <= baseY + h; py += step) {
-          if (isInRoundedRect(px, py, x, baseY, w, h, radius)) {
-            pts.push({ x: px, y: py });
-          }
-        }
-      }
-    };
-
-    const spineRadius = spineW * 0.2;
-    for (let k = 0; k < 3; k++) {
-      addRoundedRectPoints(left, spineTop, spineW, spineHeight, spineRadius);
-    }
-    addCurvedBarPoints(left, topBarY, topWidth, barH, barH * 0.55, barArc);
-    addCurvedBarPoints(left, midBarY, midWidth, barH, barH * 0.55, barArc * 0.9);
-    addCurvedBarPoints(left, bottomBarY, bottomWidth, barH, barH * 0.55, barArc);
+    addRectPoints(left, top, left + thickness, bottom);
+    addRectPoints(left, topY - thickness / 2, topX2, topY + thickness / 2);
+    addRectPoints(left, midY - thickness / 2, midX2, midY + thickness / 2);
+    addRectPoints(left, bottomY - thickness / 2, bottomX2, bottomY + thickness / 2);
 
     return pts;
   }
@@ -3204,10 +3296,24 @@ class ParticleBackground {
       });
     } else {
       this.targetFormProgress = 0;
-      this.formStrength = 0.03;
+      this.formStrength = 0.02;
+      const centerX = this.w * 0.5;
+      const centerY = this.h * 0.5;
+      const xMin = -this.w * this.freeScatterOverscan;
+      const xMax = this.w * (1 + this.freeScatterOverscan);
+      const yMin = -this.h * this.freeScatterOverscan;
+      const yMax = this.h * (1 + this.freeScatterOverscan);
       this.particles.forEach((p) => {
-        p.tx = Math.random() * this.w;
-        p.ty = Math.random() * this.h;
+        p.tx = xMin + Math.random() * (xMax - xMin);
+        p.ty = yMin + Math.random() * (yMax - yMin);
+
+        const dx = p.x - centerX;
+        const dy = p.y - centerY;
+        const dist = Math.max(8, Math.sqrt(dx * dx + dy * dy));
+        const outwardX = dx / dist;
+        const outwardY = dy / dist;
+        p.vx = outwardX * this.freeDispersionBurst + (Math.random() - 0.5) * 1.6;
+        p.vy = outwardY * this.freeDispersionBurst + (Math.random() - 0.5) * 1.6;
       });
     }
   }
@@ -3223,7 +3329,10 @@ class ParticleBackground {
         tx: Math.random() * this.w,
         ty: Math.random() * this.h,
         radius: Math.random() * 1 + 0.6,
-        opacity: 0.2 + Math.random() * 0.4,
+        opacity: 0.4 + Math.random() * 0.5,
+        twinklePhase: Math.random() * Math.PI * 2,
+        twinkleSpeed: 1.8 + Math.random() * 2.4,
+        twinkleDepth: 0.6 + Math.random() * 0.3,
         delay: Math.random() * 0.3,
       });
     }
@@ -3232,13 +3341,27 @@ class ParticleBackground {
   animate(time) {
     if (!this.ctx || !this.w || !this.h) return;
 
+    if (this.isTabHidden) {
+      this.animationId = requestAnimationFrame(this.animate);
+      return;
+    }
+
+    if (this.isScrolling) {
+      this.scrollFrameToggle = !this.scrollFrameToggle;
+      if (!this.scrollFrameToggle) {
+        this.animationId = requestAnimationFrame(this.animate);
+        return;
+      }
+    }
+
     this.ctx.clearRect(0, 0, this.w, this.h);
 
-    const formLerp = 0.028;
+    const formLerp = this.targetFormProgress < this.formProgress ? 0.08 : 0.028;
     this.formProgress += (this.targetFormProgress - this.formProgress) * formLerp;
 
     const cx = this.cursorX;
     const cy = this.cursorY;
+    const repelRadiusSq = this.repelRadius * this.repelRadius;
 
     const waveAngle = this.currentSection === 'contact'
       ? Math.sin((time || 0) * 0.002) * 0.18
@@ -3249,8 +3372,9 @@ class ParticleBackground {
     this.particles.forEach((p) => {
       const dx = p.x - cx;
       const dy = p.y - cy;
-      const distToCursor = Math.sqrt(dx * dx + dy * dy);
-      if (distToCursor < this.repelRadius && distToCursor > 2) {
+      const distSq = dx * dx + dy * dy;
+      if (distSq < repelRadiusSq && distSq > 4) {
+        const distToCursor = Math.sqrt(distSq);
         const force = (1 - distToCursor / this.repelRadius) * this.repelStrength;
         const nx = dx / distToCursor;
         const ny = dy / distToCursor;
@@ -3274,10 +3398,14 @@ class ParticleBackground {
       p.x += (targetX - p.x) * pull + (1 - this.formProgress) * p.vx;
       p.y += (targetY - p.y) * pull + (1 - this.formProgress) * p.vy;
       if (this.formProgress < 0.01) {
-        if (p.x < 0 || p.x > this.w) p.vx *= -1;
-        if (p.y < 0 || p.y > this.h) p.vy *= -1;
-        p.x = Math.max(0, Math.min(this.w, p.x));
-        p.y = Math.max(0, Math.min(this.h, p.y));
+        const minX = -this.w * this.freeScatterOverscan;
+        const maxX = this.w * (1 + this.freeScatterOverscan);
+        const minY = -this.h * this.freeScatterOverscan;
+        const maxY = this.h * (1 + this.freeScatterOverscan);
+        if (p.x < minX || p.x > maxX) p.vx *= -1;
+        if (p.y < minY || p.y > maxY) p.vy *= -1;
+        p.x = Math.max(minX, Math.min(maxX, p.x));
+        p.y = Math.max(minY, Math.min(maxY, p.y));
       }
     });
 
@@ -3289,8 +3417,8 @@ class ParticleBackground {
         const dx = this.particles[i].x - this.particles[j].x;
         const dy = this.particles[i].y - this.particles[j].y;
         if (dx * dx + dy * dy < connDistSq) {
-          const d = Math.sqrt(dx * dx + dy * dy);
-          const alpha = (1 - d / this.connectionDistance) * 0.1 * (0.5 + this.formProgress * 0.5);
+          const distRatio = (dx * dx + dy * dy) / connDistSq;
+          const alpha = (1 - distRatio) * 0.1 * (0.5 + this.formProgress * 0.5);
           this.ctx.strokeStyle = `rgba(94, 234, 212, ${alpha})`;
           this.ctx.lineWidth = 0.6;
           this.ctx.beginPath();
@@ -3303,19 +3431,52 @@ class ParticleBackground {
     }
 
     const glowBoost = this.currentSection === 'contact' ? 0.25 * this.formProgress : 0;
+    const twinkleTime = (time || 0) * 0.001;
+    this.ctx.shadowBlur = 8;
+    this.ctx.shadowColor = 'rgba(226, 232, 240, 0.45)';
     this.particles.forEach((p) => {
       this.ctx.beginPath();
-      const radius = this.currentSection === 'contact'
+      const baseRadius = this.currentSection === 'contact'
         ? p.radius * (1 + 0.35 * this.formProgress)
         : p.radius;
-      const opacity = Math.min(1, p.opacity + glowBoost);
+      const wave = 0.5 + 0.5 * Math.sin(twinkleTime * p.twinkleSpeed + p.twinklePhase);
+      const sparkle = 0.5 + 0.5 * Math.sin(twinkleTime * (p.twinkleSpeed * 2.2) + p.twinklePhase * 1.7);
+      const twinkle = (1 - p.twinkleDepth) + p.twinkleDepth * (wave * 0.78 + sparkle * 0.22);
+      const opacity = Math.max(0.12, Math.min(1, (p.opacity + glowBoost) * twinkle));
+      const radius = baseRadius * (0.82 + wave * 0.38);
       this.ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = `rgba(94, 234, 212, ${opacity})`;
+      this.ctx.fillStyle = `rgba(226, 232, 240, ${opacity})`;
+      this.ctx.fill();
+
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, Math.max(0.5, radius * 0.45), 0, Math.PI * 2);
+      this.ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, opacity + 0.2)})`;
       this.ctx.fill();
     });
+    this.ctx.shadowBlur = 0;
 
     this.animationId = requestAnimationFrame(this.animate);
   }
+}
+
+function initScrollPerformanceMode() {
+  let scrollTimer = null;
+  const activate = () => {
+    if (!document.body) return;
+    document.body.classList.add('is-scrolling');
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      document.body.classList.remove('is-scrolling');
+    }, 140);
+  };
+
+  window.addEventListener('scroll', activate, { passive: true });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initScrollPerformanceMode);
+} else {
+  initScrollPerformanceMode();
 }
 
 // ===== END CURSOR REPEL EFFECT =====
