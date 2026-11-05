@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yatharth Rathi — Product Manager Intern · AI & Digital Product</title>
+  <meta name="description" content="Building AI-powered product experiences. Portfolio of Yatharth Rathi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f0e6;
+      --bg-deep: #ebe2d3;
+      --text: #2c2416;
+      --text-muted: #6b5e4a;
+      --accent: #d9a441;
+      --accent-soft: rgba(217, 164, 65, 0.18);
+      --card: rgba(255, 252, 245, 0.72);
+      --border: rgba(44, 36, 22, 0.12);
+      --shadow: 0 18px 50px rgba(44, 36, 22, 0.08);
+      --font-display: "Cormorant Garamond", Georgia, serif;
+      --font-body: "Outfit", system-ui, sans-serif;
+      --radius: 18px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    [data-theme="night"] {
+      --bg: #1a1520;
+      --bg-deep: #12101a;
+      --text: #f3ebe0;
+      --text-muted: #b8a99a;
+      --accent: #e0b35a;
+      --accent-soft: rgba(224, 179, 90, 0.15);
+      --card: rgba(30, 25, 38, 0.75);
+      --border: rgba(243, 235, 224, 0.1);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background 0.7s var(--ease), color 0.5s;
+    }
+    #intro {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.9s var(--ease), visibility 0.9s;
+    }
+    #intro.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #intro-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+    .intro-ui { position: relative; z-index: 2; text-align: center; pointer-events: none; }
+    .enter-btn {
+      pointer-events: auto;
+      width: 96px; height: 96px; border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: var(--card); color: var(--text);
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 500;
+      letter-spacing: 0.04em; cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.35s var(--ease), box-shadow 0.35s;
+    }
+    .enter-btn:hover, .enter-btn:focus-visible {
+      transform: scale(1.06);
+      box-shadow: 0 12px 40px rgba(217, 164, 65, 0.25);
+      outline: none;
+    }
+    .intro-hint {
+      margin-top: 1.75rem; font-size: 0.95rem;
+      color: var(--text-muted); letter-spacing: 0.02em;
+    }
+    .skip-intro {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 1010;
+      font-size: 0.8rem; color: var(--text-muted);
+      background: transparent; border: 1px solid var(--border);
+      padding: 0.4rem 0.85rem; border-radius: 999px; cursor: pointer;
+      font-family: var(--font-body);
+      transition: color 0.25s, border-color 0.25s, background 0.25s;
+    }
+    .skip-intro:hover, .skip-intro:focus-visible {
+      color: var(--text); border-color: var(--accent);
+      background: var(--accent-soft); outline: none;
+    }
+    #main { opacity: 0; visibility: hidden; transition: opacity 1s var(--ease); }
+    #main.visible { opacity: 1; visibility: visible; }
+    .controls {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100;
+      display: flex; gap: 0.6rem;
+    }
+    .ctrl-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--card);
+      backdrop-filter: blur(12px); color: var(--text);
+      display: grid; place-items: center; cursor: pointer;
+      transition: transform 0.3s var(--ease), border-color 0.3s;
+    }
+    .ctrl-btn:hover, .ctrl-btn:focus-visible {
+      transform: scale(1.08); border-color: var(--accent); outline: none;
+    }
+    .ctrl-btn svg { width: 18px; height: 18px; }
+    .container { width: min(1080px, 92vw); margin: 0 auto; }
+    section { padding: 5.5rem 0; }
+    .section-label {
+      font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem; font-weight: 500;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 500;
+      letter-spacing: -0.02em; margin-bottom: 2rem; line-height: 1.15;
+    }
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; position: relative;
+      padding-bottom: 4rem; overflow: hidden;
+    }
+    #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+    .hero-content { position: relative; z-index: 2; max-width: 640px; }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 8vw, 4.8rem); font-weight: 500;
+      line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 0.75rem;
+    }
+    .hero .role { font-size: 1.15rem; color: var(--accent); font-weight: 500; margin-bottom: 0.6rem; }
+    .hero .tagline { font-size: 1.2rem; color: var(--text-muted); max-width: 28ch; margin-bottom: 2rem; }
+    .hero-nav { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .hero-nav a {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.25rem; border-radius: 999px;
+      font-size: 0.9rem; font-weight: 500; text-decoration: none;
+      transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
+    }
+    .btn-primary { background: var(--text); color: var(--bg); border: 1px solid var(--text); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .about-grid {
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: start;
+    }
+    @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-bio { font-size: 1.15rem; color: var(--text-muted); line-height: 1.75; }
+    .about-bio p + p { margin-top: 1.1rem; }
+    .about-meta { display: flex; flex-direction: column; gap: 1.25rem; }
+    .meta-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1.4rem;
+      backdrop-filter: blur(8px);
+    }
+    .meta-card h4 {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.35rem;
+    }
+    .meta-card p { font-size: 1rem; }
+    .projects-list { display: flex; flex-direction: column; gap: 0; }
+    .project-card {
+      display: grid; grid-template-columns: 1fr auto; gap: 1.5rem;
+      padding: 1.75rem 0; border-top: 1px solid var(--border);
+      text-decoration: none; color: inherit;
+      transition: background 0.3s; align-items: baseline;
+    }
+    .project-card:last-child { border-bottom: 1px solid var(--border); }
+    .project-card:hover { background: var(--accent-soft); }
+    .project-card h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 2.8vw, 1.7rem); font-weight: 500; margin-bottom: 0.35rem;
+    }
+    .project-card .desc { color: var(--text-muted); font-size: 0.95rem; max-width: 52ch; }
+    .project-meta {
+      font-size: 0.8rem; color: var(--text-muted); text-align: right; white-space: nowrap;
+    }
+    .project-meta span { display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+    .tag {
+      font-size: 0.7rem; padding: 0.2rem 0.55rem;
+      border: 1px solid var(--border); border-radius: 999px; color: var(--text-muted);
+    }
+    .exp-list { display: flex; flex-direction: column; gap: 2rem; }
+    .exp-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem 1.8rem;
+      backdrop-filter: blur(8px);
+    }
+    .exp-header {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      gap: 0.5rem; margin-bottom: 0.75rem;
+    }
+    .exp-item h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 500; }
+    .exp-item .role { color: var(--accent); font-weight: 500; font-size: 0.95rem; }
+    .exp-item .period { font-size: 0.85rem; color: var(--text-muted); }
+    .exp-item ul { margin-top: 0.9rem; padding-left: 1.15rem; color: var(--text-muted); font-size: 0.95rem; }
+    .exp-item li + li { margin-top: 0.4rem; }
+    .skills-groups {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.75rem;
+    }
+    .skill-group h4 {
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem;
+    }
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .skill-pills span {
+      font-size: 0.82rem; padding: 0.4rem 0.8rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; color: var(--text);
+      transition: border-color 0.25s, transform 0.25s var(--ease);
+    }
+    .skill-pills span:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .contact-block p {
+      color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.75rem; max-width: 42ch;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 0.7rem; }
+    .contact-links a {
+      font-size: 1.15rem; color: var(--text); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.6rem; transition: color 0.25s;
+    }
+    .contact-links a:hover { color: var(--accent); }
+    .contact-links svg { width: 18px; height: 18px; opacity: 0.75; }
+    footer {
+      padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--border);
+      font-size: 0.8rem; color: var(--text-muted);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 600px) {
+      .project-card { grid-template-columns: 1fr; }
+      .project-meta { text-align: left; margin-top: 0.4rem; }
+      .controls { bottom: 1rem; right: 1rem; }
+      .enter-btn { width: 88px; height: 88px; font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- INTRO -->
+  <div id="intro">
+    <canvas id="intro-canvas"></canvas>
+    <button class="skip-intro" id="skipIntro">Skip intro</button>
+    <div class="intro-ui">
+      <button class="enter-btn" id="enterBtn" aria-label="Enter portfolio">Enter</button>
+      <p class="intro-hint">Draw a circle around the button to enter</p>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div class="controls">
+      <button class="ctrl-btn" id="soundBtn" aria-label="Toggle ambient sound" title="Sound">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path d="M15.5 8.5a4 4 0 010 7" opacity="0.4"/>
+          <path d="M18 6a7 7 0 010 12" opacity="0.25"/>
+          <line x1="22" y1="4" x2="4" y2="20" stroke-width="1.6"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn" id="themeBtn" aria-label="Toggle day/night" title="Theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <canvas id="hero-canvas"></canvas>
+      <div class="container hero-content">
+        <p class="role">Product Manager Intern · AI & Digital Product</p>
+        <h1>Yatharth Rathi</h1>
+        <p class="tagline">Building AI-powered product experiences</p>
+        <div class="hero-nav">
+          <a href="#work" class="btn-primary">Selected Work</a>
+          <a href="#experience" class="btn-ghost">Experience</a>
+          <a href="#contact" class="btn-ghost">Contact</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="container">
+        <p class="section-label reveal">About</p>
+        <h2 class="section-title reveal">A bit about me</h2>
+        <div class="about-grid">
+          <div class="about-bio reveal">
+            <p>I work at the intersection of product, AI, and user experience. Recently I contributed to the redesign of a 1M+ user B2C e-commerce platform, translating stakeholder discussions and competitive research into clear requirements, journeys, and UX specifications that were accepted into the live revamp.</p>
+            <p>I care about turning ambiguous problems into structured decisions — whether that is clarifying edge cases in a checkout flow, designing evaluation harnesses for AI systems, or building small tools that reduce documentation friction for a team.</p>
+          </div>
+          <div class="about-meta reveal">
+            <div class="meta-card">
+              <h4>Education</h4>
+              <p>B.Tech CSE (AI) · Bennett University<br>Expected June 2027</p>
+            </div>
+            <div class="meta-card">
+              <h4>Focus</h4>
+              <p>AI Product · Digital Product · Requirements & Journeys</p>
+            </div>
+            <div class="meta-card">
+              <h4>Based in</h4>
+              <p>New Delhi / Greater Noida, India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECTED WORK – filled from your existing portfolio file -->
+    <section id="work">
+      <div class="container">
+        <p class="section-label reveal">Selected Work</p>
+        <h2 class="section-title reveal">Projects</h2>
+        <div class="projects-list">
+          <article class="project-card reveal">
+            <div>
+              <h3>Safety Judge</h3>
+              <p class="desc">LangGraph + RAG system that turns a product idea into user stories, threat model, and security requirements. Built end-to-end as sole developer.</p>
+              <div class="tags">
+                <span class="tag">LangGraph</span>
+                <span class="tag">RAG</span>
+                <span class="tag">Python</span>
+                <span class="tag">Mermaid.js</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <span>Sole developer</span>
+              <span>2026</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div>
+              <h3>n8n AI Workflow Agent</h3>
+              <p class="desc">Agent with memory and live SERP search for research and product-support style tasks — AI to accelerate product workflow.</p>
+              <div class="tags">
+                <span class="tag">n8n</span>
+                <span class="tag">Agents</span>
+                <span class="tag">APIs</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <span>Builder</span>
+              <span>2026</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div>
+              <h3>Nordem — Commerce journeys</h3>
+              <p class="desc">PM intern on a live 1M+ user platform: 3 BRDs + 3 FRDs, journey friction, checkout trade-offs, 14+ cross-functional reviews. Requirements accepted into the revamp.</p>
+              <div class="tags">
+                <span class="tag">PRDs</span>
+                <span class="tag">Journeys</span>
+                <span class="tag">Stakeholders</span>
+                <span class="tag">UAT</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <span>PM Intern</span>
+              <span>2026</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div>
+              <h3>Airbnb host diagnostic</h3>
+              <p class="desc">Clickable analytics prototype with weighted Market Alignment Score and full funnel diagnosis — simulated pricing recommendation (8% weekday cut).</p>
+              <div class="tags">
+                <span class="tag">HTML/CSS/JS</span>
+                <span class="tag">Excel model</span>
+                <span class="tag">Funnels</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <span>Prototype</span>
+              <span>2026</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div>
+              <h3>Student-housing teardown</h3>
+              <p class="desc">Competitor research, five CX friction points, prioritised experiment backlog — 8-slide recommendation deck for search→application conversion.</p>
+              <div class="tags">
+                <span class="tag">Research</span>
+                <span class="tag">Experiments</span>
+                <span class="tag">Deck</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <span>Case study</span>
+              <span>2026</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="container">
+        <p class="section-label reveal">Experience</p>
+        <h2 class="section-title reveal">Where I’ve worked</h2>
+        <div class="exp-list">
+          <article class="exp-item reveal">
+            <div class="exp-header">
+              <div>
+                <h3>Nordem Technologies</h3>
+                <p class="role">Product Manager Intern · RCM World (B2C, 1M+ users)</p>
+              </div>
+              <p class="period">Jun – Aug 2026 · Jaipur</p>
+            </div>
+            <ul>
+              <li>Contributed to the redesign of the RCM World web & mobile experience across Brand Pages, Product Pages, category/search discovery, Store Locator, delivery/serviceability, offers and checkout.</li>
+              <li>Authored 3 BRDs + 3 FRDs covering 10+ POS workflows; documented 14 stakeholder meetings; worked across 26+ MDM modules and 15+ account modules.</li>
+              <li>Defined 4 user personas and translated competitive benchmarking into implementable requirements that were accepted into the live product revamp.</li>
+            </ul>
+          </article>
+          <article class="exp-item reveal">
+            <div class="exp-header">
+              <div>
+                <h3>Synapse Innovate & SEPR-Lyon</h3>
+                <p class="role">Programme Participant — AI & Product Track</p>
+              </div>
+              <p class="period">Jun – Nov 2025 · Geneva & Lyon</p>
+            </div>
+            <ul>
+              <li>Designed evaluation test suites for an AI chatbot MVP against user-acceptance criteria and documented edge cases and conversational fallback failures.</li>
+              <li>Framed results around sub-3s latency and pilot Day-1 retention improvement; synthesized findings into a stakeholder presentation.</li>
+              <li>Authored PRDs and user stories that translated technical requirements into prioritised Jira backlogs for an international engineering team.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS – cleaned from your file -->
+    <section id="skills">
+      <div class="container">
+        <p class="section-label reveal">Capabilities</p>
+        <h2 class="section-title reveal">Skills</h2>
+        <div class="skills-groups reveal">
+          <div class="skill-group">
+            <h4>Product</h4>
+            <div class="skill-pills">
+              <span>Product strategy</span>
+              <span>PRDs & user stories</span>
+              <span>Journey mapping</span>
+              <span>Prioritisation</span>
+              <span>Experiment design</span>
+              <span>Stakeholder facilitation</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>AI / Technical</h4>
+            <div class="skill-pills">
+              <span>LangChain / LangGraph</span>
+              <span>RAG & agents</span>
+              <span>NLP / CV pipelines</span>
+              <span>Python</span>
+              <span>SQL</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Tools</h4>
+            <div class="skill-pills">
+              <span>Jira</span>
+              <span>Figma</span>
+              <span>Excel models</span>
+              <span>n8n</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <p class="section-label reveal">Contact</p>
+        <h2 class="section-title reveal">Let’s work together</h2>
+        <div class="contact-block reveal">
+          <p>I’m open to full-time and internship roles in product management, AI product, and analytics starting June–August 2027. Best way to reach me is email.</p>
+          <div class="contact-links">
+            <a href="mailto:yatharthrathi08@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+              yatharthrathi08@gmail.com
+            </a>
+            <a href="https://github.com/Yatharth80" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              GitHub
+            </a>
+            <a href="https://linkedin.com/in/yatharth-rathi-781aa627b" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;width:100%;">
+        <span>© 2026 Yatharth Rathi</span>
+        <span>Designed & built with care</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const root = document.documentElement;
+      const themeBtn = document.getElementById("themeBtn");
+      const themeIcon = document.getElementById("themeIcon");
+
+      function getPreferredTheme() {
+        const stored = localStorage.getItem("theme");
+        if (stored) return stored;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "night" : "day";
+      }
+      function setTheme(theme) {
+        root.setAttribute("data-theme", theme === "night" ? "night" : "");
+        localStorage.setItem("theme", theme);
+        themeIcon.innerHTML = theme === "night"
+          ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
+          : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+        window.dispatchEvent(new CustomEvent("themechange", { detail: theme }));
+      }
+      setTheme(getPreferredTheme());
+      themeBtn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "night" ? "day" : "night";
+        setTheme(next);
+      });
+
+      const soundBtn = document.getElementById("soundBtn");
+      let soundOn = false;
+      soundBtn.addEventListener("click", () => {
+        soundOn = !soundOn;
+        soundBtn.style.opacity = soundOn ? "1" : "0.7";
+      });
+
+      // Intro
+      const intro = document.getElementById("intro");
+      const introCanvas = document.getElementById("intro-canvas");
+      const ctx = introCanvas.getContext("2d");
+      const enterBtn = document.getElementById("enterBtn");
+      const skipBtn = document.getElementById("skipIntro");
+      let w, h, cx, cy, drawing = false, points = [], entered = false, animId;
+
+      function resizeIntro() {
+        w = introCanvas.width = window.innerWidth;
+        h = introCanvas.height = window.innerHeight;
+        cx = w / 2; cy = h / 2;
+      }
+      resizeIntro();
+      window.addEventListener("resize", resizeIntro);
+
+      function drawCharacter(time, phase) {
+        const x = cx - 140, y = cy + 40;
+        const bob = Math.sin(time * 0.002) * 3;
+        ctx.save();
+        ctx.translate(x, y + bob);
+        ctx.fillStyle = "#5c6b4a";
+        ctx.beginPath(); ctx.ellipse(0, 30, 28, 38, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#e8c4a0";
+        ctx.beginPath(); ctx.arc(0, -28, 22, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#2a2118";
+        ctx.beginPath();
+        ctx.moveTo(-18, -38); ctx.quadraticCurveTo(-5, -58, 12, -48);
+        ctx.quadraticCurveTo(18, -40, 16, -30); ctx.quadraticCurveTo(5, -42, -16, -32);
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = "#2a2118"; ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.rect(-14, -34, 11, 8); ctx.rect(3, -34, 11, 8);
+        ctx.moveTo(-3, -30); ctx.lineTo(3, -30); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, -22, 6, 0.15, Math.PI - 0.15); ctx.stroke();
+        const wave = phase === "wave" ? Math.sin(time * 0.008) * 0.6 : 0.3;
+        ctx.strokeStyle = "#e8c4a0"; ctx.lineWidth = 6; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(22, 10);
+        ctx.quadraticCurveTo(45, -10 + wave * 20, 55, -25 + wave * 15); ctx.stroke();
+        ctx.fillStyle = "#e8c4a0";
+        ctx.beginPath(); ctx.arc(55, -25 + wave * 15, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      function drawTrail() {
+        if (points.length < 2) return;
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        for (let i = 1; i < points.length; i++) {
+          const p0 = points[i - 1], p1 = points[i];
+          const age = (points.length - i) / points.length;
+          ctx.strokeStyle = `rgba(217, 164, 65, ${0.15 + age * 0.55})`;
+          ctx.lineWidth = 4 + age * 6;
+          ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+        }
+      }
+
+      function checkCircleComplete() {
+        if (points.length < 12) return false;
+        const btnRect = enterBtn.getBoundingClientRect();
+        const bx = btnRect.left + btnRect.width / 2;
+        const by = btnRect.top + btnRect.height / 2;
+        const angles = points.map(p => {
+          let a = Math.atan2(p.y - by, p.x - bx);
+          if (a < 0) a += Math.PI * 2;
+          return a;
+        }).sort((a, b) => a - b);
+        let covered = 0;
+        for (let i = 1; i < angles.length; i++) {
+          const diff = angles[i] - angles[i - 1];
+          if (diff < 1.2) covered += diff;
+        }
+        const wrap = (angles[0] + Math.PI * 2) - angles[angles.length - 1];
+        if (wrap < 1.2) covered += wrap;
+        return covered > Math.PI * 2 * 0.68;
+      }
+
+      let startTime = performance.now();
+      function introLoop(t) {
+        if (entered) return;
+        const time = t - startTime;
+        ctx.clearRect(0, 0, w, h);
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+        g.addColorStop(0, root.getAttribute("data-theme") === "night" ? "#241c30" : "#faf4ea");
+        g.addColorStop(1, root.getAttribute("data-theme") === "night" ? "#14101a" : "#ebe2d3");
+        ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+        drawCharacter(time, time < 3000 ? "wave" : "point");
+        drawTrail();
+        animId = requestAnimationFrame(introLoop);
+      }
+      if (!reducedMotion) animId = requestAnimationFrame(introLoop);
+      else { ctx.fillStyle = "#f7f0e6"; ctx.fillRect(0, 0, w, h); drawCharacter(0, "point"); }
+
+      function addPoint(x, y) {
+        points.push({ x, y });
+        if (points.length > 180) points.shift();
+        if (checkCircleComplete()) completeIntro();
+      }
+      introCanvas.addEventListener("pointerdown", e => { drawing = true; points = []; addPoint(e.clientX, e.clientY); });
+      introCanvas.addEventListener("pointermove", e => { if (drawing) addPoint(e.clientX, e.clientY); });
+      window.addEventListener("pointerup", () => { drawing = false; });
+
+      function completeIntro() {
+        if (entered) return;
+        entered = true;
+        cancelAnimationFrame(animId);
+        intro.classList.add("hidden");
+        document.getElementById("main").classList.add("visible");
+        window.dispatchEvent(new Event("introdone"));
+      }
+      enterBtn.addEventListener("click", completeIntro);
+      skipBtn.addEventListener("click", completeIntro);
+      window.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); completeIntro(); }
+      });
+
+      // Hero atmospheric scene
+      const heroCanvas = document.getElementById("hero-canvas");
+      const hctx = heroCanvas.getContext("2d");
+      let hw, hh, particles = [], heroAnimId, heroTime = 0;
+
+      function resizeHero() {
+        hw = heroCanvas.width = heroCanvas.offsetWidth;
+        hh = heroCanvas.height = heroCanvas.offsetHeight;
+        particles = [];
+        const count = Math.min(60, Math.floor(hw / 20));
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * hw, y: Math.random() * hh,
+            r: 0.6 + Math.random() * 1.8, s: 0.15 + Math.random() * 0.4,
+            a: 0.15 + Math.random() * 0.35
+          });
+        }
+      }
+
+      function drawHeroScene() {
+        const isNight = root.getAttribute("data-theme") === "night";
+        hctx.clearRect(0, 0, hw, hh);
+        const sky = hctx.createLinearGradient(0, 0, 0, hh);
+        if (isNight) {
+          sky.addColorStop(0, "#1a1428"); sky.addColorStop(0.5, "#2a1f3d"); sky.addColorStop(1, "#3d2a22");
+        } else {
+          sky.addColorStop(0, "#f0d5b0"); sky.addColorStop(0.45, "#f7e4c8"); sky.addColorStop(1, "#e8c9a0");
+        }
+        hctx.fillStyle = sky; hctx.fillRect(0, 0, hw, hh);
+
+        const orbY = hh * 0.38;
+        const orbG = hctx.createRadialGradient(hw * 0.7, orbY, 0, hw * 0.7, orbY, 120);
+        orbG.addColorStop(0, isNight ? "rgba(240,230,200,0.35)" : "rgba(255,200,120,0.55)");
+        orbG.addColorStop(1, "rgba(255,180,100,0)");
+        hctx.fillStyle = orbG;
+        hctx.beginPath(); hctx.arc(hw * 0.7, orbY, 120, 0, Math.PI * 2); hctx.fill();
+
+        hctx.fillStyle = isNight ? "#12101a" : "#3d3228";
+        hctx.beginPath();
+        hctx.moveTo(0, hh); hctx.lineTo(0, hh * 0.72);
+        hctx.quadraticCurveTo(hw * 0.3, hh * 0.68, hw * 0.5, hh * 0.74);
+        hctx.quadraticCurveTo(hw * 0.75, hh * 0.8, hw, hh * 0.7);
+        hctx.lineTo(hw, hh); hctx.closePath(); hctx.fill();
+
+        const fx = hw * 0.28, fy = hh * 0.71;
+        hctx.fillStyle = isNight ? "#1e1830" : "#2a221c";
+        hctx.beginPath(); hctx.ellipse(fx, fy - 18, 16, 22, 0, 0, Math.PI * 2); hctx.fill();
+        hctx.beginPath(); hctx.arc(fx, fy - 48, 12, 0, Math.PI * 2); hctx.fill();
+        hctx.strokeStyle = isNight ? "#1e1830" : "#2a221c"; hctx.lineWidth = 7; hctx.lineCap = "round";
+        hctx.beginPath();
+        hctx.moveTo(fx - 8, fy); hctx.quadraticCurveTo(fx - 30, fy + 20, fx - 25, fy + 35);
+        hctx.moveTo(fx + 6, fy); hctx.quadraticCurveTo(fx + 28, fy + 15, fx + 35, fy + 30);
+        hctx.stroke();
+
+        if (isNight) {
+          const glow = hctx.createRadialGradient(fx + 22, fy - 10, 0, fx + 22, fy - 10, 40);
+          glow.addColorStop(0, "rgba(255,200,100,0.35)"); glow.addColorStop(1, "rgba(255,180,80,0)");
+          hctx.fillStyle = glow;
+          hctx.beginPath(); hctx.arc(fx + 22, fy - 10, 40, 0, Math.PI * 2); hctx.fill();
+          hctx.fillStyle = "#e8c070";
+          hctx.beginPath(); hctx.arc(fx + 22, fy - 10, 4, 0, Math.PI * 2); hctx.fill();
+        }
+
+        particles.forEach(p => {
+          p.y -= p.s;
+          if (p.y < -10) { p.y = hh + 10; p.x = Math.random() * hw; }
+          hctx.beginPath();
+          hctx.fillStyle = isNight ? `rgba(220,200,160,${p.a * 0.6})` : `rgba(255,240,210,${p.a})`;
+          hctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); hctx.fill();
+        });
+      }
+
+      function heroLoop(t) {
+        heroTime = t;
+        drawHeroScene();
+        heroAnimId = requestAnimationFrame(heroLoop);
+      }
+      window.addEventListener("introdone", () => {
+        resizeHero();
+        if (!reducedMotion) heroAnimId = requestAnimationFrame(heroLoop);
+        else drawHeroScene();
+      });
+      window.addEventListener("resize", () => {
+        if (document.getElementById("main").classList.contains("visible")) resizeHero();
+      });
+      window.addEventListener("themechange", () => {
+        if (document.getElementById("main").classList.contains("visible")) drawHeroScene();
+      });
+
+      // Reveal
+      const reveals = document.querySelectorAll(".reveal");
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+      reveals.forEach(el => obs.observe(el));
+    })();
+  </script>
+</body>
+</html>
